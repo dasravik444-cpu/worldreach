@@ -67,7 +67,7 @@ site_interval_s = 2.0
 
 [crawler]
 bot_name = "WorldReachBot"
-contact_url = ""
+contact_url = "https://github.com/dasravik444-cpu/worldreach"
 
 [runtime]
 time_budget_minutes = 120

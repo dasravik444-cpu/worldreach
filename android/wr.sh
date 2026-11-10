@@ -157,7 +157,7 @@ case "${1:-help}" in
   watchdog)    [ -f "$STOPFLAG" ] || running || { echo "$(stamp) watchdog: not running - starting" >> "$LOGF"; start; } ;;
   whatsapp)    shift; exec bash "$HOST_DIR/android/whatsapp.sh" "$@" ;;
   update)      set -o pipefail
-               curl -fsSL --retry 5 "https://raw.githubusercontent.com/__REPO__/main/android/setup.sh" | bash -s update ||
+               curl -fsSL --retry 5 "https://raw.githubusercontent.com/dasravik444-cpu/worldreach/main/android/setup.sh" | bash -s update ||
                  { echo "The update stopped - check the internet and type  wr update  again."; exit 1; }
                echo "If the robot is on, it takes the new version at its next job (or now:  wr off  then  wr on )." ;;
   leads|emails|hunt)

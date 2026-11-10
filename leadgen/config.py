@@ -28,7 +28,7 @@ DEFAULTS: dict = {
                  "start_date": "", "language": "en", "region": "us", "lead_id_prefix": "WR"},
     # The website crawler introduces itself with this name (robots.txt rules are read for it) and a page
     # where site owners can read who is crawling and how to object.
-    "crawler": {"bot_name": "WorldReachBot", "contact_url": ""},
+    "crawler": {"bot_name": "WorldReachBot", "contact_url": "https://github.com/dasravik444-cpu/worldreach"},
     "area": {"name": "", "aliases": [], "center": None, "radius_km": 25.0, "local_landline_prefixes": []},
     "plan": {"days": 30, "daily_target": 150, "order": "center_out", "min_cell_km": 1.0, "max_cell_km": 10.0,
              "split_threshold": 60, "finish_scheduled_part": True},

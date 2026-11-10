@@ -1,13 +1,13 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # One-time setup on an Android tablet or phone, inside the Termux app (docs/SETUP.md).
 # Paste this into Termux:
-#   curl -fsSL https://raw.githubusercontent.com/__REPO__/main/android/setup.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/dasravik444-cpu/worldreach/main/android/setup.sh | bash
 # It installs a small Ubuntu Linux inside Termux (its own, named worldreach: the ones of your other robots are left
 # alone), Python and WorldReach, and adds ONE command to Termux:  wr   (type  wr  alone for the list).
 # If it stops halfway (a network hiccup), paste the line again: it carries on from where it stopped.
 set -e
-REPO=https://github.com/__REPO__
-RAW=https://raw.githubusercontent.com/__REPO__/main
+REPO=https://github.com/dasravik444-cpu/worldreach
+RAW=https://raw.githubusercontent.com/dasravik444-cpu/worldreach/main
 NAME=worldreach                         # the Ubuntu inside Termux
 DIR=/root/worldreach                    # the robot's folder in it
 UBUNTU=https://cdimage.ubuntu.com/ubuntu-base/releases/24.04/release
