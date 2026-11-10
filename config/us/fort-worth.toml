@@ -1,0 +1,14 @@
+# Fort Worth - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-fort-worth"
+timezone = "America/Chicago"
+lead_id_prefix = "FTW"
+
+[area]
+name = "Fort Worth"
+aliases = ["Fort Worth TX", "Arlington"]
+center = [32.7555, -97.3308]
+radius_km = 20

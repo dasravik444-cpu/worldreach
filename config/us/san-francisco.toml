@@ -1,0 +1,14 @@
+# San Francisco - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-san-francisco"
+timezone = "America/Los_Angeles"
+lead_id_prefix = "SFO"
+
+[area]
+name = "San Francisco"
+aliases = ["SF", "Oakland", "Berkeley", "Bay Area"]
+center = [37.7749, -122.4194]
+radius_km = 20

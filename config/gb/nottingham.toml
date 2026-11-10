@@ -1,0 +1,14 @@
+# Nottingham - one city of the the UK campaigns (config/gb/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "gb-nottingham"
+timezone = "Europe/London"
+lead_id_prefix = "NTM"
+
+[area]
+name = "Nottingham"
+aliases = ["Derby"]
+center = [52.9548, -1.1581]
+radius_km = 12

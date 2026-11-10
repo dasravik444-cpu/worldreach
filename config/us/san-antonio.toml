@@ -1,0 +1,14 @@
+# San Antonio - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-san-antonio"
+timezone = "America/Chicago"
+lead_id_prefix = "SAT"
+
+[area]
+name = "San Antonio"
+aliases = ["San Antonio TX", "SATX"]
+center = [29.4241, -98.4936]
+radius_km = 25

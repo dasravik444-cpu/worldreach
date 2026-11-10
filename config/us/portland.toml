@@ -1,0 +1,14 @@
+# Portland - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-portland"
+timezone = "America/Los_Angeles"
+lead_id_prefix = "PDX"
+
+[area]
+name = "Portland"
+aliases = ["Portland OR", "PDX"]
+center = [45.5152, -122.6784]
+radius_km = 20

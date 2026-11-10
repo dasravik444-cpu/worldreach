@@ -1,0 +1,14 @@
+# Cardiff - one city of the the UK campaigns (config/gb/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "gb-cardiff"
+timezone = "Europe/London"
+lead_id_prefix = "CDF"
+
+[area]
+name = "Cardiff"
+aliases = ["Caerdydd"]
+center = [51.4816, -3.1791]
+radius_km = 12

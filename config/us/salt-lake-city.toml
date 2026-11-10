@@ -1,0 +1,14 @@
+# Salt Lake City - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-salt-lake-city"
+timezone = "America/Denver"
+lead_id_prefix = "SLC"
+
+[area]
+name = "Salt Lake City"
+aliases = ["SLC"]
+center = [40.7608, -111.891]
+radius_km = 20

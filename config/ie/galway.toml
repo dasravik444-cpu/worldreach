@@ -1,0 +1,14 @@
+# Galway - one city of the Ireland campaigns (config/ie/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "ie-galway"
+timezone = "Europe/Dublin"
+lead_id_prefix = "GWY"
+
+[area]
+name = "Galway"
+aliases = ["Salthill"]
+center = [53.2707, -9.0568]
+radius_km = 10

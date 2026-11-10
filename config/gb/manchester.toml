@@ -1,0 +1,14 @@
+# Manchester - one city of the the UK campaigns (config/gb/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "gb-manchester"
+timezone = "Europe/London"
+lead_id_prefix = "MAN"
+
+[area]
+name = "Manchester"
+aliases = ["Salford", "Stockport", "Greater Manchester"]
+center = [53.4808, -2.2426]
+radius_km = 15

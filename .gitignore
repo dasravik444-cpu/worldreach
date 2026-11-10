@@ -1,0 +1,28 @@
+# Lead data, the outreach memory, keys and settings never go into git
+data/
+state/
+out/
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+*.csv
+.env
+settings.txt
+secrets/*
+!secrets/README.txt
+/*.json
+
+# your own copy of the brochure (with your phone number)
+marketing/own/
+
+# client work: customer lists and their memory
+clients-data/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/

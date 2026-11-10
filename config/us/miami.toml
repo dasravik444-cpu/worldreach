@@ -1,0 +1,14 @@
+# Miami - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-miami"
+timezone = "America/New_York"
+lead_id_prefix = "MIA"
+
+[area]
+name = "Miami"
+aliases = ["Miami Beach", "Coral Gables", "Hialeah", "Fort Lauderdale"]
+center = [25.7617, -80.1918]
+radius_km = 30

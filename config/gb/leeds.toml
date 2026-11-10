@@ -1,0 +1,14 @@
+# Leeds - one city of the the UK campaigns (config/gb/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "gb-leeds"
+timezone = "Europe/London"
+lead_id_prefix = "LDS"
+
+[area]
+name = "Leeds"
+aliases = ["Bradford", "West Yorkshire"]
+center = [53.8008, -1.5491]
+radius_km = 15

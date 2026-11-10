@@ -1,0 +1,14 @@
+# Phoenix - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-phoenix"
+timezone = "America/Phoenix"
+lead_id_prefix = "PHX"
+
+[area]
+name = "Phoenix"
+aliases = ["Scottsdale", "Tempe", "Mesa", "Glendale", "Chandler"]
+center = [33.4484, -112.074]
+radius_km = 35

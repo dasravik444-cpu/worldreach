@@ -1,0 +1,14 @@
+# Dublin - one city of the Ireland campaigns (config/ie/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "ie-dublin"
+timezone = "Europe/Dublin"
+lead_id_prefix = "DUB"
+
+[area]
+name = "Dublin"
+aliases = ["Dublin City", "Dun Laoghaire", "Swords", "Tallaght"]
+center = [53.3498, -6.2603]
+radius_km = 15

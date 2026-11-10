@@ -1,0 +1,14 @@
+# Tampa - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-tampa"
+timezone = "America/New_York"
+lead_id_prefix = "TPA"
+
+[area]
+name = "Tampa"
+aliases = ["St. Petersburg", "St Pete", "Clearwater"]
+center = [27.9506, -82.4572]
+radius_km = 30

@@ -1,0 +1,14 @@
+# New York - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-new-york"
+timezone = "America/New_York"
+lead_id_prefix = "NYC"
+
+[area]
+name = "New York"
+aliases = ["New York City", "NYC", "Manhattan", "Brooklyn", "Queens", "Bronx"]
+center = [40.7128, -74.006]
+radius_km = 25

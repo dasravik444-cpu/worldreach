@@ -1,0 +1,14 @@
+# Newcastle - one city of the the UK campaigns (config/gb/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "gb-newcastle"
+timezone = "Europe/London"
+lead_id_prefix = "NCL"
+
+[area]
+name = "Newcastle"
+aliases = ["Newcastle upon Tyne", "Gateshead", "Tyneside"]
+center = [54.9783, -1.6178]
+radius_km = 12

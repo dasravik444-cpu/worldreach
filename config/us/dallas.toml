@@ -1,0 +1,14 @@
+# Dallas - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-dallas"
+timezone = "America/Chicago"
+lead_id_prefix = "DAL"
+
+[area]
+name = "Dallas"
+aliases = ["Dallas TX", "DFW", "Plano", "Irving", "Garland"]
+center = [32.7767, -96.797]
+radius_km = 25

@@ -1,0 +1,14 @@
+# Cork - one city of the Ireland campaigns (config/ie/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "ie-cork"
+timezone = "Europe/Dublin"
+lead_id_prefix = "ORK"
+
+[area]
+name = "Cork"
+aliases = ["Cork City"]
+center = [51.8985, -8.4756]
+radius_km = 12

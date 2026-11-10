@@ -1,0 +1,14 @@
+# Nashville - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-nashville"
+timezone = "America/Chicago"
+lead_id_prefix = "BNA"
+
+[area]
+name = "Nashville"
+aliases = ["Music City"]
+center = [36.1627, -86.7816]
+radius_km = 20

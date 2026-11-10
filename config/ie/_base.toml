@@ -1,0 +1,68 @@
+# Shared settings of every Irish city (config/ie/<city>.toml includes this file).
+#
+# Ireland (docs/COMPLIANCE.md): companies (Ltd / DAC / PLC) may be e-mailed about their business with a way to say
+# no; sole traders need consent, so they are NOT e-mailed. Every e-mail says where the address came from (GDPR).
+
+[campaign]
+country = "IE"
+language = "en"
+region = "ie"
+
+[sheets]
+enabled = true
+leads_tab = "Leads IE"
+plan_tab = ""
+report_tab = "Lead Report"
+require_any = ["email", "whatsapp"]
+checkpoint_minutes = 20
+
+[filters]
+require_contact = true
+exclude_closed = true
+allow_unmatched_categories = false
+exclude_chains = [
+  "supermac", "mcdonald", "burger king", "apache pizza", "abrakebabra", "costa", "starbucks", "insomnia", "butlers",
+  "eddie rockets", "milano", "wagamama", "pizza hut", "domino", "flyefit", "gym plus", "energie fitness",
+  "anytime fitness", "ben dunne", "west wood club", "toni & guy", "peter mark", "maldron", "clayton hotel",
+  "jurys inn", "travelodge", "holiday inn", "premier inn", "kwik fit", "advance pitstop", "petmania", "maxi zoo",
+]
+exclude_name_words = ["adult", "erotic", "strip club", "escort", "vape"]
+
+[plan]
+days = 7                 # each city is split into 7 parts, the centre first
+daily_target = "auto"
+order = "center_out"
+min_cell_km = 1.0
+max_cell_km = 8.0
+split_threshold = 60
+finish_scheduled_part = true
+
+[compliance]
+mode = "open-data"       # Overture Maps + OpenStreetMap + the businesses' own websites (no Google scraping)
+
+[open_data]
+min_confidence = 0.5
+refresh_days = 30
+exclude_codes = ["internet_cafe", "cafeteria", "hookah_bar", "gas_station", "convenience_store", "hostel"]
+
+[enrich]
+website = true
+max_pages_per_site = 6
+social_search = false
+instagram_profile = false
+check_email_mx = true
+role_email_candidates = false   # no guessed info@ addresses: every bounce costs a mailbox its reputation
+email_hunt = true
+email_archive = true      # sites that do not answer us: their archived pages from Common Crawl (open web archive)
+email_search = false      # no reading of search-engine result pages (their terms forbid it; BRAVE_API_KEY is the official way)
+workers = 6               # websites read at the same time (the tablet shares its memory with two other robots)
+site_interval_s = 2.0
+
+[crawler]
+bot_name = "WorldReachBot"
+contact_url = ""
+
+[runtime]
+time_budget_minutes = 120
+safety_margin_minutes = 6
+use_curl_cffi = false

@@ -1,0 +1,8 @@
+# The cities of Ireland, in the order they are searched (one at a time, each until it is done).
+# Put "#" in front of a line to leave a city out. New cities: scripts/make_markets.py.
+cities = [
+  "dublin",
+  "cork",
+  "galway",
+  "limerick",
+]

@@ -1,0 +1,14 @@
+# Minneapolis - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-minneapolis"
+timezone = "America/Chicago"
+lead_id_prefix = "MSP"
+
+[area]
+name = "Minneapolis"
+aliases = ["Saint Paul", "St. Paul", "Twin Cities"]
+center = [44.9778, -93.265]
+radius_km = 20

@@ -1,0 +1,14 @@
+# Seattle - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-seattle"
+timezone = "America/Los_Angeles"
+lead_id_prefix = "SEA"
+
+[area]
+name = "Seattle"
+aliases = ["Bellevue", "Redmond"]
+center = [47.6062, -122.3321]
+radius_km = 25

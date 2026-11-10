@@ -1,0 +1,14 @@
+# Los Angeles - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-los-angeles"
+timezone = "America/Los_Angeles"
+lead_id_prefix = "LAX"
+
+[area]
+name = "Los Angeles"
+aliases = ["LA", "Hollywood", "Santa Monica", "Pasadena", "Long Beach"]
+center = [34.0522, -118.2437]
+radius_km = 35

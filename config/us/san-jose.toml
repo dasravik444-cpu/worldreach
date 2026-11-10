@@ -1,0 +1,14 @@
+# San Jose - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-san-jose"
+timezone = "America/Los_Angeles"
+lead_id_prefix = "SJC"
+
+[area]
+name = "San Jose"
+aliases = ["Silicon Valley", "Santa Clara", "Sunnyvale"]
+center = [37.3382, -121.8863]
+radius_km = 20

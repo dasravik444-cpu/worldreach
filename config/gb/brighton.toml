@@ -1,0 +1,14 @@
+# Brighton - one city of the the UK campaigns (config/gb/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "gb-brighton"
+timezone = "Europe/London"
+lead_id_prefix = "BTN"
+
+[area]
+name = "Brighton"
+aliases = ["Hove"]
+center = [50.8225, -0.1372]
+radius_km = 10

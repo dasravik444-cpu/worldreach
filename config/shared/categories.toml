@@ -1,0 +1,110 @@
+# The kinds of business we look for, shared by every city campaign (include = ["../shared/categories.toml"]).
+#
+# Who buys customer follow-up: businesses that live on people coming back - members, clients, guests - and that
+# keep a list of them (a booking system, a till, a membership list). The first five are the strongest fit and are
+# written to first (config/outreach.toml, boost_categories).
+#
+#   overture  category codes in the Overture Maps open data. Codes that do not exist simply match nothing.
+#   osm       OpenStreetMap tags (the fallback when the open data cannot be read)
+#   queries / match   search words and labels (only used in "standard" mode, which is off)
+#
+# Left out on purpose: dentists, clinics and other health care. In the US a company that handles their patient
+# lists needs a signed HIPAA agreement and matching safeguards; do not switch them on before that is in place.
+
+[[categories]]
+key = "gym"
+label = "Gym / Fitness"
+queries = ["gym", "fitness center"]
+match = ["gym", "fitness", "crossfit", "boxing", "personal trainer", "cycling studio", "climbing", "boot camp"]
+osm = ['["leisure"="fitness_centre"]', '["leisure"="sports_centre"]']
+# "sport_or_fitness_facility" is left out on purpose: it also holds public sports grounds and pools.
+overture = ["gym", "fitness_center", "boxing_gym", "boxing_class", "cycling_classes", "climbing_gym", "personal_trainer",
+            "fitness_trainer", "boot_camp", "crossfit_gym", "kickboxing_club"]
+
+[[categories]]
+key = "studio"
+label = "Yoga / Pilates / Dance studio"
+queries = ["yoga studio", "pilates studio", "dance studio"]
+match = ["yoga", "pilates", "barre", "dance studio", "dance school", "fitness studio"]
+osm = ['["leisure"="dance"]', '["sport"="yoga"]']
+overture = ["fitness_studio", "yoga_studio", "pilates_studio", "dance_studio", "dance_school", "barre_classes",
+            "meditation_center"]
+
+[[categories]]
+key = "martial_arts"
+label = "Martial arts school"
+queries = ["martial arts school", "karate", "jiu jitsu"]
+match = ["martial art", "karate", "taekwondo", "jiu", "judo", "kung fu", "muay thai", "krav maga", "self defense"]
+osm = ['["sport"="martial_arts"]', '["sport"="karate"]', '["sport"="judo"]', '["sport"="taekwondo"]']
+overture = ["martial_arts_club", "karate_club", "taekwondo_club", "judo_club", "brazilian_jiu_jitsu_club",
+            "kung_fu_club", "muay_thai_club", "self_defense_classes"]
+
+[[categories]]
+key = "salon"
+label = "Hair / Beauty / Barber"
+queries = ["hair salon", "barber", "beauty salon", "nail salon"]
+match = ["salon", "hair", "barber", "beauty", "nail", "lash", "brow", "waxing", "tanning", "makeup", "make-up"]
+osm = ['["shop"="hairdresser"]', '["shop"="beauty"]']
+overture = ["hair_salon", "hair_stylist", "barber", "beauty_salon", "nail_salon", "beauty_and_spa", "eyelash_service",
+            "eyebrow_service", "waxing", "tanning_salon", "skin_care", "skin_care_and_makeup", "makeup_artist",
+            "hair_removal"]
+
+[[categories]]
+key = "spa"
+label = "Spa / Massage"
+queries = ["day spa", "massage"]
+match = ["spa", "massage", "wellness", "sauna", "float"]
+osm = ['["leisure"="spa"]', '["shop"="massage"]']
+overture = ["spa", "day_spa", "massage", "massage_therapy", "sauna", "float_spa"]
+
+[[categories]]
+key = "hotel"
+label = "Hotel / Guesthouse"
+queries = ["hotel", "bed and breakfast"]
+match = ["hotel", "guest house", "guesthouse", "bed and breakfast", "b&b", "inn", "motel", "lodge", "resort"]
+osm = ['["tourism"="hotel"]', '["tourism"="guest_house"]', '["tourism"="motel"]']
+overture = ["hotel", "guest_house", "bed_and_breakfast", "motel", "inn", "lodge", "resort"]
+
+[[categories]]
+key = "pets"
+label = "Pet groomer / Boarding"
+queries = ["pet groomer", "dog daycare"]
+match = ["pet", "groom", "dog", "kennel", "boarding", "daycare"]
+osm = ['["shop"="pet_grooming"]', '["amenity"="animal_boarding"]']
+overture = ["pet_groomer", "pet_boarding", "dog_trainer", "pet_sitting", "animal_or_pet_service", "dog_walkers"]
+
+[[categories]]
+key = "auto"
+label = "Garage / Car detailing"
+queries = ["auto repair", "car detailing"]
+match = ["car repair", "auto repair", "garage", "mechanic", "car wash", "detailing", "tyre", "tire", "body shop"]
+osm = ['["shop"="car_repair"]', '["amenity"="car_wash"]', '["shop"="tyres"]']
+overture = ["automotive_repair", "auto_body_shop", "car_wash", "auto_detailing", "tire_dealer_and_repair", "tire_shop",
+            "oil_change_station", "auto_glass_service"]
+
+[[categories]]
+key = "restaurant"
+label = "Restaurant"
+queries = ["restaurant"]
+match = ["restaurant", "dining", "eatery", "grill", "pizzeria", "steakhouse", "bistro", "brasserie", "trattoria", "diner",
+         "kitchen", "sushi", "ramen", "taqueria", "burger", "noodle", "curry", "tapas"]
+osm = ['["amenity"="restaurant"]']
+# No fast food, food trucks or delivery kitchens: they keep no guest list to follow up.
+overture = ["restaurant", "*_restaurant", "casual_eatery", "diner", "steakhouse", "bistro", "brasserie"]
+
+[[categories]]
+key = "cafe"
+label = "Cafe"
+queries = ["cafe", "coffee shop"]
+match = ["cafe", "café", "coffee", "tea house", "tea room", "espresso", "roastery", "brunch"]
+osm = ['["amenity"="cafe"]']
+overture = ["cafe", "coffee_shop", "tea_room", "breakfast_and_brunch_restaurant", "coffee_roastery"]
+
+[[categories]]
+key = "bar"
+label = "Bar / Pub"
+enabled = false   # few keep a guest list; switch on for a city where the others run out
+queries = ["bar", "pub"]
+match = ["bar", "pub", "tavern", "brewery", "brewpub", "wine bar", "cocktail", "gastropub"]
+osm = ['["amenity"="bar"]', '["amenity"="pub"]']
+overture = ["bar", "pub", "cocktail_bar", "wine_bar", "brewery", "gastropub", "irish_pub", "tapas_bar"]

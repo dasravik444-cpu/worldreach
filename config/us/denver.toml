@@ -1,0 +1,14 @@
+# Denver - one city of the the US campaigns (config/us/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "us-denver"
+timezone = "America/Denver"
+lead_id_prefix = "DEN"
+
+[area]
+name = "Denver"
+aliases = ["Aurora", "Lakewood"]
+center = [39.7392, -104.9903]
+radius_km = 25

@@ -1,0 +1,442 @@
+"""Quality agent: name matching, chain/category filters, duplicate detection, lead qualification."""
+from __future__ import annotations
+
+import re
+from difflib import SequenceMatcher
+
+from . import country
+from .util import norm_text
+
+# Words that say what a business *is* or where it is (not *which* business it is), the country's big cities
+# and the words businesses add to social handles depend on the campaign's country: see country.py.
+
+# Listing/aggregator sites: not the business's own website (no contact crawl; not "the" website)
+AGGREGATOR_DOMAINS = {
+    "zomato.com", "swiggy.com", "swiggy.in", "magicpin.in", "justdial.com", "dineout.co.in", "eazydiner.com",
+    "tripadvisor.com", "tripadvisor.in", "booking.com", "makemytrip.com", "goibibo.com", "agoda.com", "expedia.com",
+    "hotels.com", "airbnb.com", "airbnb.co.in", "oyorooms.com", "sulekha.com", "indiamart.com", "tradeindia.com",
+    "weddingz.in", "wedmegood.com", "shaadisaga.com", "venuelook.com", "bookeventz.com", "weddingwire.in",
+    "urbanclap.com", "urbancompany.com", "houzz.com", "houzz.in", "yelp.com", "foursquare.com", "facebook.com",
+    "instagram.com", "linkedin.com", "twitter.com", "x.com", "youtube.com", "google.com", "goo.gl", "g.page",
+    "business.google.com", "maps.app.goo.gl", "wa.me", "whatsapp.com", "linktr.ee", "bit.ly", "zaubacorp.com",
+    "thefork.com", "restaurantguru.com", "lbb.in", "so.city", "whatshot.in", "nearbuy.com", "dunzo.com",
+    "zeptonow.com", "blinkit.com", "bigbasket.com", "amazon.in", "flipkart.com", "practo.com", "quora.com",
+    "wikipedia.org", "wikimedia.org", "wikidata.org", "wikimapia.org", "wikitravel.org", "tripoto.com",
+    # Germany / Austria / Switzerland
+    "lieferando.de", "lieferando.at", "lieferando.com", "opentable.de", "quandoo.de", "quandoo.com", "thefork.de",
+    "tripadvisor.de", "tripadvisor.at", "tripadvisor.ch", "yelp.de", "gelbeseiten.de", "dasoertliche.de", "11880.com",
+    "meinestadt.de", "speisekarte.de", "speisekarte.menu", "golocal.de", "cylex.de", "cylex-branchenbuch.de",
+    "branchenbuch.de", "wolt.com", "ubereats.com", "resmio.com", "bookatable.com", "treatwell.de", "shore.com",
+    "eversports.de", "urbansportsclub.com", "provenexpert.com", "trustpilot.com", "jameda.de", "werkenntdenbesten.de",
+    "kununu.com", "restaurant-guru.de", "foodora.at", "falstaff.com", "booking.de", "holidaycheck.de", "hrs.de",
+    "groupon.de", "marktplatz-mittelstand.de", "stadtbranchenbuch.com", "yably.de", "branchen-info.net",
+    # United States
+    "doordash.com", "grubhub.com", "seamless.com", "toasttab.com", "chownow.com", "slicelife.com", "menufy.com",
+    "beyondmenu.com", "allmenus.com", "menupages.com", "zmenu.com", "singleplatform.com", "resy.com",
+    "exploretock.com", "sevenrooms.com", "mapquest.com", "yellowpages.com", "bbb.org", "angi.com", "nextdoor.com",
+    "vagaro.com", "styleseat.com", "mindbodyonline.com", "groupon.com", "postmates.com", "caviar.com",
+    "order.online", "clover.com", "opentable.com", "yelp.ca",
+    # United Kingdom / Ireland
+    "just-eat.co.uk", "just-eat.ie", "deliveroo.co.uk", "deliveroo.ie", "opentable.co.uk", "designmynight.com",
+    "yell.com", "thomsonlocal.com", "scoot.co.uk", "freeindex.co.uk", "resdiary.com", "treatwell.co.uk",
+    "fresha.com", "booksy.com", "yelp.co.uk", "tripadvisor.co.uk", "squaremeal.co.uk", "hardens.com",
+    "touchbistro.com", "kitchen.co", "flipdish.com",
+    # Australia / New Zealand
+    "menulog.com.au", "opentable.com.au", "quandoo.com.au", "truelocal.com.au", "yellowpages.com.au", "hotfrog.com.au",
+    "broadsheet.com.au", "timeout.com", "mryum.com", "meandu.com", "meandu.app", "bopple.com", "hungryhungry.com",
+    "gettimely.com", "tripadvisor.com.au", "yelp.com.au", "localsearch.com.au", "startlocal.com.au",
+    "zomato.com.au", "menulog.co.nz",
+}
+# Link hubs owned by the business: worth crawling for social links, but not a "website".
+LINK_HUB_DOMAINS = {"linktr.ee", "beacons.ai", "bio.link", "linkin.bio", "taplink.cc", "campsite.bio", "lnk.bio"}
+
+
+# Common English words often used as business names ("Natural", "Empire", "Ruby"). A profile that
+# matches only such a word (or a very short one) is weak evidence on its own.
+COMMON_NAME_WORDS = {
+    "royal", "empire", "grand", "golden", "gold", "silver", "diamond", "crown", "star", "stars", "sun", "moon", "sky",
+    "cloud", "clouds", "blue", "green", "red", "white", "black", "orange", "yellow", "pink", "purple", "natural",
+    "nature", "organic", "fresh", "urban", "modern", "classic", "elite", "prime", "premium", "luxury", "supreme",
+    "perfect", "smart", "happy", "lucky", "bliss", "joy", "delight", "delights", "dream", "dreams", "magic",
+    "paradise", "heaven", "spice", "spices", "aroma", "flavour", "flavours", "flavor", "flavors", "taste", "tastes",
+    "treat", "treats", "tasty", "yummy", "sweet", "honey", "sugar", "cream", "ruby", "pearl", "emerald", "crystal",
+    "lotus", "rose", "lily", "orchid", "jasmine", "tulip", "sunflower", "sunrise", "sunset", "rainbow", "ocean",
+    "river", "garden", "gardens", "forest", "hills", "valley", "village", "coastal", "harbour", "metro", "central",
+    "capital", "tower", "towers", "plaza", "square", "avenue", "lane", "bloom", "blossom", "aura", "zen", "karma",
+    "vibe", "vibes", "mood", "soul", "spirit", "story", "stories", "tales", "chapter", "tribe", "nest", "den", "hut",
+    "cabin", "cottage", "mansion", "castle", "fort", "kingdom", "king", "kings", "queen", "prince", "princess",
+    "angel", "angels", "boss", "chief", "master", "legend", "legends", "hero", "titan", "phoenix", "eagle", "tiger",
+    "lion", "falcon", "global", "world", "universal", "galaxy", "planet", "earth", "fire", "ice", "water", "air",
+    "spring", "summer", "winter", "autumn", "season", "seasons", "time", "times", "life", "living", "home", "homes",
+    "comfort", "cozy", "cosy", "plus", "max", "pro", "one", "first", "best", "top", "new", "old", "little", "big",
+    "mega", "super", "ultra", "true", "pure", "simple", "basic", "elegant", "elegance", "style", "styles", "trend",
+    "trends", "fashion", "art", "arts", "craft", "crafts", "creative", "creations", "concept", "concepts", "idea",
+    "ideas", "vision", "image", "images", "touch", "space", "square", "circle", "line", "lines", "point", "edge",
+    "peak", "summit", "horizon", "sunshine", "breeze", "mist", "dew", "leaf", "leaves", "tree", "trees", "root",
+    "roots", "seed", "seeds", "harvest", "farm", "farms", "field", "fields", "meadow", "brew", "bean", "beans",
+    "cup", "mug", "plate", "bowl", "spoon", "fork", "oven", "flame", "smoke", "grill", "chill", "frost", "delicious",
+    "crunch", "bite", "bites", "nibbles", "feast", "platter", "thali", "tiffin", "dabba", "masala", "tadka",
+    "zaika", "swad", "rasoi", "khana", "annapurna", "lakshmi", "ganesh", "durga", "kali", "shiva", "krishna",
+    "balaji", "sai", "om", "shree", "shri", "sri", "jai", "maa", "baba", "new", "natural", "lifestyle", "signature",
+    "expressions", "impressions", "moments", "memories", "celebrations", "occasions", "glamour", "glory", "pride",
+    "hive", "loft", "nook", "bake", "jazz", "folk", "bold", "chic", "glow", "haze", "mint", "sage", "pepper", "olive",
+    "basil", "thyme", "wood", "woods", "stone", "rock", "iron", "steel", "glass", "brick", "hill", "view", "vista",
+    "oak", "pine", "palm", "fern", "moss", "ivy", "lime", "mango", "berry", "cherry", "peach", "plum", "coco", "choco",
+    "crust", "dough", "bread", "toast", "rice", "bowl", "wrap", "roll", "rolls", "momo", "momos", "wings", "fries",
+    "shake", "shakes", "juice", "soda", "beer", "wine", "malt", "hops", "grape", "salt", "tree", "hope", "love",
+    "faith", "grace", "peace", "unity", "zest", "vibe", "cove", "bay", "port", "dock", "deck", "roof", "rooftop",
+    "terrace", "patio", "yard", "court", "gate", "arch", "dome", "hall", "maple", "cedar", "birch", "aqua", "nova",
+    "luna", "sol", "terra", "verde", "bella", "dolce", "casa", "villa", "amore", "bon", "petit",
+    # German
+    "alt", "alte", "alter", "neu", "neue", "stern", "sonne", "mond", "linde", "post", "krone", "adler", "hirsch",
+    "loewe", "lowe", "rose", "eiche", "berg", "tal", "see", "hof", "markt", "stadt", "dorf", "brunnen", "brucke",
+    "bruecke", "turm", "schloss", "burg", "muehle", "muhle", "anker", "hafen", "insel", "wald", "feld", "wiese",
+    "baum", "blume", "zeit", "glueck", "gluck", "liebe", "herz", "freund", "freunde", "heimat", "genuss", "lecker",
+    "frisch", "fein", "gut", "goldene", "goldener", "schwarz", "weiss", "rot", "gruen", "grun", "blau", "kleine",
+    "kleiner", "grosse", "grosser", "erste", "ecke", "eck", "stube", "kiez", "sonnenschein", "traum",
+}
+# First names used as brands ("Jimmy's", "Alisha") match many unrelated people and shops.
+COMMON_FIRST_NAMES = {
+    "raj", "ravi", "amit", "rahul", "rohit", "sumit", "anil", "sunil", "ajay", "vijay", "sanjay", "arjun", "mohan",
+    "sohan", "ram", "shyam", "gopal", "babu", "bapi", "raju", "pappu", "bunty", "golu", "monu", "sonu", "chotu",
+    "mithu", "rinku", "pintu", "tutu", "bablu", "dipu", "tapan", "swapan", "biswajit", "subrata", "partha", "arup",
+    "amar", "akbar", "anthony", "asif", "imran", "irfan", "salman", "aamir", "shahid", "javed", "rahim", "karim",
+    "ali", "hassan", "hussain", "abdul", "ahmed", "aziz", "farhan", "sameer", "zaid", "priya", "puja", "pooja",
+    "neha", "sonia", "alisha", "ayesha", "sana", "riya", "rhea", "isha", "tanya", "nisha", "rani", "radha", "meera",
+    "mamta", "rina", "tina", "nina", "rita", "gita", "sita", "pinky", "dolly", "molly", "polly", "sweety", "babli",
+    "anjali", "kavya", "diya", "ananya", "shreya", "sneha", "megha", "payal", "sonali", "rupa", "mou", "mithi",
+    "jimmy", "johnny", "tony", "peter", "sam", "joe", "mike", "rocky", "bobby", "sunny", "danny", "lucy", "maria",
+    "anna", "sara", "sarah", "emma", "olivia", "sophia", "mia", "zara", "aryan", "ayaan", "kabir", "vivaan", "reyansh",
+    "ishaan", "advik", "dev", "neel", "rudra", "om", "sai", "jai", "veer", "arnav", "rishi", "aditya", "akash",
+    "vikas", "deepak", "manoj", "ashok", "suresh", "ramesh", "mahesh", "dinesh", "rajesh", "mukesh", "naresh",
+    "prakash", "santosh", "subhash", "kamal", "bimal", "nirmal", "shankar", "gautam", "rakesh", "uttam", "ather",
+    "ruby", "rose", "lily", "jasmine", "daisy", "pearl", "jenny", "kitty", "kiki", "coco", "nancy", "elena", "victoria",
+    # German and other European first names used as brands
+    "hans", "peter", "klaus", "jurgen", "juergen", "wolfgang", "michael", "thomas", "andreas", "stefan", "markus",
+    "frank", "uwe", "dieter", "gunter", "guenter", "karl", "fritz", "otto", "max", "paul", "felix", "lukas", "jonas",
+    "anna", "maria", "julia", "lisa", "laura", "lena", "lea", "marie", "sophie", "emma", "hanna", "hannah", "mila",
+    "greta", "frieda", "ida", "luise", "clara", "klara", "paula", "mehmet", "ali", "ahmet", "mustafa", "giovanni",
+    "luigi", "mario", "marco", "luca", "antonio", "giuseppe", "francesco", "pablo", "carlos", "jose", "nikos",
+    "kostas", "yuki", "kim", "lee", "linh", "minh",
+}
+_VOWELS = set("aeiouy")
+
+
+def _is_common(t: str) -> bool:
+    words = COMMON_NAME_WORDS | COMMON_FIRST_NAMES
+    return t in words or (t.endswith("s") and t[:-1] in words)
+
+def tokens(s: str) -> list[str]:
+    return [t for t in norm_text(s).split() if t]
+
+
+def distinctive_tokens(name: str) -> list[str]:
+    generic = country.generic_words()
+    return [t for t in tokens(name) if t not in generic and len(t) > 1]
+
+
+def _joined(ts: list[str]) -> str:
+    return "".join(ts)
+
+
+def _skeleton(t: str) -> str:
+    """Consonant skeleton, tolerant to the vowel/doubling variations of transliterated names
+    (Daawat/Dawat, Bangali/Bengali, Kolkatta/Kolkata) but not to different consonants (Arabiya/Arabica)."""
+    if not t:
+        return ""
+    out = [t[0]]
+    for ch in t[1:]:
+        if ch in _VOWELS or ch == out[-1]:
+            continue
+        out.append(ch)
+    return "".join(out)
+
+
+def token_equiv(a: str, b: str) -> bool:
+    if a == b:
+        return True
+    if a + "s" == b or b + "s" == a or a + "es" == b or b + "es" == a:
+        return True
+    if len(a) >= 4 and len(b) >= 4 and a[0] == b[0] and not (a.isdigit() or b.isdigit()):
+        sa = _skeleton(a)
+        return len(sa) >= 3 and sa == _skeleton(b)
+    return False
+
+
+def _segment(s: str, biz: list[str], vocab: set) -> tuple[bool, set]:
+    """Split a joined string ("cafebloomkolkata") into business-name tokens (spelling-tolerant), generic or
+    location words and digit runs. Returns (fully explained, business tokens used)."""
+    n = len(s)
+    best: list = [None] * (n + 1)
+    best[0] = frozenset()
+
+    def upd(j, used):
+        if best[j] is None or len(used) > len(best[j]):
+            best[j] = used
+    for i in range(n):
+        if best[i] is None:
+            continue
+        j = i
+        while j < n and s[j].isdigit():
+            j += 1
+        if j > i:
+            upd(j, best[i])
+        for j in range(i + 2, min(n, i + 30) + 1):
+            piece = s[i:j]
+            hit = next((t for t in biz if token_equiv(piece, t)), None)
+            if hit:
+                upd(j, best[i] | {hit})
+            elif piece in vocab:
+                upd(j, best[i])
+    return best[n] is not None, set(best[n] or ())
+
+
+class _Match:
+    __slots__ = ("score", "dist", "covered", "handle_full")
+
+    def __init__(self, score=0.0, dist=(), covered=(), handle_full=False):
+        self.score, self.dist, self.covered, self.handle_full = score, list(dist), set(covered), handle_full
+
+
+def core_name(business: str) -> str:
+    """The name without SEO tails: "The Prime Banquet - Best Banquet Hall in Kolkata" -> "The Prime Banquet"."""
+    parts = re.split(r"\s[-|–:]\s|\s?\|\s?|:\s|\s\(|,\s", business or "", maxsplit=1)
+    return parts[0].strip() if parts and parts[0].strip() else (business or "")
+
+
+def _match_one(business: str, candidate: str, handle: str) -> _Match:
+    b_all, b_dist = tokens(business), distinctive_tokens(business)
+    if not b_all:
+        return _Match()
+    biz = [t for t in b_all if len(t) >= 2]
+    vocab = {w for w in country.generic_words() if len(w) >= 2} | country.handle_fillers() | set(biz)
+    covered: set = set()
+    c_all = tokens(candidate)
+    for t in c_all:
+        _, used = _segment(t, biz, vocab)
+        covered |= used
+    handle_full, h_cov = False, set()
+    if handle:
+        segs = [x for x in re.split(r"[^a-z0-9]+", handle.lower()) if x]
+        full = bool(segs)
+        for seg in segs:
+            if len(seg) == 1:
+                continue
+            ok, used = _segment(seg, biz, vocab)
+            if not ok:
+                full = False
+                used = {t for t in biz if len(t) >= 3 and seg.startswith(t)}   # "cafebloom123xyz"
+            h_cov |= used
+        handle_full = full and bool(h_cov)
+        covered |= h_cov
+    scores = []
+    if b_dist:
+        hits = sum(1 for t in b_dist if t in covered)
+        cov = hits / len(b_dist)
+        scores.append(cov)
+        if c_all:
+            c_dist = distinctive_tokens(candidate)
+            if c_dist:
+                scores.append(SequenceMatcher(None, _joined(b_dist), _joined(c_dist)).ratio())
+            scores.append(SequenceMatcher(None, " ".join(b_all), " ".join(c_all)).ratio())
+        if handle and all(t in h_cov for t in b_dist):
+            scores.append(0.95 if handle_full else 0.88)
+        if cov < 1.0 and hits >= 2 and cov >= 0.6:
+            # most of a longer name matches ("Zero Degree Cafe and Lounge Esplanade" -> @zerodegreekolkata)
+            scores.append(0.75 + 0.2 * cov)
+        score = max(scores)
+        if cov < 1.0 and not (hits >= 2 and cov >= 0.6):
+            score = min(score, 0.7)    # a distinctive word of the name is missing
+        return _Match(score, b_dist, covered, handle_full)
+    # Entirely generic names ("Coffee House", "The Street Cafe") only match near-identical candidates.
+    if c_all:
+        scores.append(SequenceMatcher(None, " ".join(b_all), " ".join(c_all)).ratio())
+    if handle and handle_full and all(t in h_cov for t in biz if t not in ("the", "and", "of")):
+        scores.append(0.95)
+    best = max(scores or [0.0])
+    return _Match(best if best >= 0.95 else min(best, 0.6), [], covered, handle_full)
+
+
+def name_match(business: str, candidate: str, handle: str = "") -> _Match:
+    m = _match_one(business, candidate, handle)
+    core = core_name(business)
+    if core and core != business and distinctive_tokens(core):
+        m2 = _match_one(core, candidate, handle)
+        if m2.score > m.score:
+            m = m2
+    return m
+
+
+def same_business_name(lead_name: str, other: str) -> bool:
+    """Two listings with the same phone number are the same business only when the lead's own distinctive name
+    is there - not just "Hotel"/"Kitchen"/"Guest House" (OYO and FabHotels properties share one number), and not
+    a chain's shared brand with a different property name ("FabExpress Nest" vs "FabExpress Sai City Inn")."""
+    m = name_match(lead_name, other)
+    hits = [t for t in m.dist if t in m.covered]
+    if not hits:
+        return False
+    missing = [t for t in m.dist if t not in m.covered]
+    lead_toks = tokens(lead_name)
+    extras = [t for t in distinctive_tokens(other)
+              if not any(token_equiv(t, b) for b in lead_toks) and len(t) >= 3 and not t.isdigit()]
+    if missing and extras:
+        return False
+    return len(hits) == len(m.dist) or any(len(t) >= 4 and not _is_common(t) for t in hits) or not missing
+
+
+def weak_site_name(business: str, titles: list[str], domain_label: str) -> bool:
+    """True when a website seems to be this business only through one common word ("Metro Restaurant" and
+    metroshoes.net share just "metro"); its own phone number on the site is then needed as proof."""
+    if domain_label:
+        hm = name_match(business, "", handle=domain_label)
+        if hm.handle_full and hm.score >= 0.6:
+            return False                 # the domain spells the business's name
+    matches = [name_match(business, t) for t in titles if t]
+    best = max(matches, key=lambda m: m.score, default=None)
+    if best is None or best.score < 0.6:
+        return False
+    hits = [t for t in best.dist if t in best.covered]
+    return bool(hits) and all(_is_common(t) or len(t) < 4 for t in hits)
+
+
+def name_score(business: str, candidate: str, handle: str = "") -> float:
+    """0..1 similarity between a business name and a candidate profile/page name or handle."""
+    return name_match(business, candidate, handle).score
+
+
+def match_strength(business: str, candidate: str, handle: str, text: str, home_terms: list[str]) -> str:
+    """How sure a matching search result is this business: 'strong' or 'weak'.
+
+    Strong: two distinctive words of the name match (not only common words like "Royal Garden"),
+    or the name has one distinctive word that is unusual (not a common English word, 4+ letters)
+    or that comes with the city/locality in the result - and the result has no extra words of
+    its own ("Alisha" vs "Alisha Mondal" / @alisha.mondal2 is someone else). Everything else is
+    weak and is stored as unverified."""
+    m = name_match(business, candidate, handle)
+    homes = [norm_text(h) for h in home_terms if h and len(norm_text(h)) >= 3]
+    hay = " " + norm_text(" ".join([text or "", candidate or "", re.sub(r"[^a-z0-9]+", " ", (handle or "").lower())])) + " "
+    h_alnum = re.sub(r"[^a-z0-9]", "", (handle or "").lower())
+    abbrevs = country.active().local_abbrevs
+    home = (any(" " + h + " " in hay for h in homes) or any(" " + a + " " in hay or h_alnum.endswith(a) for a in abbrevs)
+            or any(len(h) >= 5 and h.replace(" ", "") in h_alnum for h in homes))
+    biz = tokens(business)
+    home_words = {w for h in homes for w in h.split()}
+    extras = [t for t in distinctive_tokens(candidate)
+              if t not in home_words and not t.isdigit() and not any(token_equiv(t, b) for b in biz)]
+    if not m.dist:
+        return "strong" if home and m.score >= 0.95 and not extras else "weak"
+    hits = [t for t in m.dist if t in m.covered]
+    if len(hits) >= 2:
+        if home or len(hits) == len(m.dist) or any(not _is_common(t) for t in hits):
+            return "strong"
+        return "weak"
+    if len(hits) == 1:
+        if extras or (handle and not m.handle_full):
+            return "weak"     # the profile is named after something more than this business's one word
+        t = hits[0]
+        if home or (len(t) >= 4 and not _is_common(t) and not t.isdigit()):
+            return "strong"
+    return "weak"
+
+
+def mentions_other_city(text: str, home_terms: list[str]) -> bool:
+    low = " " + norm_text(text) + " "
+    if any(" " + norm_text(h) + " " in low for h in home_terms if h):
+        return False
+    return any(" " + norm_text(c) + " " in low for c in country.active().other_cities)
+
+
+# OYO lists franchise hotels under sub-brands followed by a property number: "SPOT ON 83258 Hotel X".
+_OYO_BRANDS = re.compile(r"^(spot on|capital o|collection o|townhouse(?: oak)?|flagship|silverkey|super oyo)\s+\d{3,}")
+
+
+def is_chain(name: str, chains: list[str]) -> str | None:
+    low = norm_text(name)
+    if _OYO_BRANDS.search(low):
+        return "oyo network"
+    for c in chains:
+        cn = norm_text(c)
+        # "domino" also matches "Domino's" and "Dominos" (the apostrophe is gone after norm_text)
+        if cn and re.search(r"(^| )" + re.escape(cn) + r"s?( |$)", low):
+            return c
+    return None
+
+
+def has_name_word(name: str, words: list[str]) -> str | None:
+    """The first of the words found in a business name as a whole word (plural 's'/'es' allowed; a trailing '*'
+    means any word starting with it), else None. "mess" finds "Sharma Mess", not "Messy Kitchen"."""
+    low = norm_text(name)
+    for w in words:
+        prefix = w.endswith("*")
+        wn = norm_text(w.rstrip("*"))
+        if wn and re.search(r"(^| )" + re.escape(wn) + (r"" if prefix else r"(s|es)?( |$)"), low):
+            return w
+    return None
+
+
+def _word_hits(word: str, label: str) -> bool:
+    """Whole-word match (plural 's'/'es' allowed); a trailing '*' in the config word means prefix match."""
+    prefix = word.endswith("*")
+    w = norm_text(word.rstrip("*"))
+    if not w:
+        return False
+    tail = r"" if prefix else r"(s|es)?( |$)"
+    return re.search(r"(^| )" + re.escape(w) + tail, label) is not None
+
+
+def match_category(gcategories: list[str], query_category: str, categories: list[dict]) -> str | None:
+    """Pick our category for a place from Google's labels; None when nothing matches.
+
+    The most specific match wins ("Event venue" -> banquet/event venue rather than
+    event planner via "event"); ties go to the category whose search found the place."""
+    labels = [norm_text(c) for c in gcategories or [] if c]
+    if not labels:
+        return None
+    # Google lists the primary category first: decide on the first label that matches anything.
+    for lab in labels:
+        best, best_len = None, 0
+        for cat in categories:
+            for word in cat.get("match", []):
+                if word and _word_hits(word, lab):
+                    n = len(norm_text(word.rstrip("*")))
+                    if n > best_len or (n == best_len and cat["key"] == query_category):
+                        best, best_len = cat["key"], n
+        if best:
+            return best
+    return None
+
+
+def domain_of(url: str) -> str:
+    from urllib.parse import urlsplit
+
+    h = (urlsplit(url if "://" in url else "http://" + url).hostname or "").lower()
+    return h[4:] if h.startswith("www.") else h
+
+
+def is_aggregator(url: str) -> bool:
+    d = domain_of(url)
+    return any(d == a or d.endswith("." + a) for a in AGGREGATOR_DOMAINS)
+
+
+def is_link_hub(url: str) -> bool:
+    d = domain_of(url)
+    return any(d == a or d.endswith("." + a) for a in LINK_HUB_DOMAINS)
+
+
+QUALIFYING_KINDS = ("phone", "whatsapp", "email", "instagram")
+
+
+def is_qualified(contact_kinds: set[str]) -> bool:
+    return any(k in contact_kinds for k in QUALIFYING_KINDS)
+
+
+def lead_priority(kinds: set[str], rating, reviews, advertises: bool = False) -> str:
+    score = 0
+    score += 1 if advertises else 0      # pays for online ads: has budget and is growing
+    score += 2 if "email" in kinds else 0
+    score += 2 if "whatsapp" in kinds else 0
+    score += 1 if "phone" in kinds else 0
+    score += 1 if "instagram" in kinds else 0
+    score += 1 if (rating or 0) >= 4.2 else 0
+    score += 1 if (reviews or 0) >= 200 else 0
+    return "High" if score >= 5 else "Medium" if score >= 3 else "Low"

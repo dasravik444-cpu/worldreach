@@ -1,0 +1,14 @@
+# Glasgow - one city of the the UK campaigns (config/gb/fleet.toml). Shared settings: _base.toml.
+# Made by scripts/make_markets.py - edit the list there and run it again.
+include = ["../shared/categories.toml", "_base.toml"]
+
+[campaign]
+id = "gb-glasgow"
+timezone = "Europe/London"
+lead_id_prefix = "GLA"
+
+[area]
+name = "Glasgow"
+aliases = ["Paisley"]
+center = [55.8642, -4.2518]
+radius_km = 15

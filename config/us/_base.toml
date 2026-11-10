@@ -1,0 +1,88 @@
+# Shared settings of every US city (config/us/<city>.toml includes this file).
+#
+# US rules (docs/COMPLIANCE.md): cold e-mail to a business is allowed under CAN-SPAM when every e-mail has a truthful
+# sender and subject, YOUR POSTAL ADDRESS and a working way to say no. WhatsApp: one by one, only to numbers a
+# business publishes as WhatsApp (very few US businesses do; e-mail is the channel here).
+
+[campaign]
+country = "US"
+language = "en"
+region = "us"
+
+[sheets]
+enabled = true
+leads_tab = "Leads US"
+plan_tab = ""
+report_tab = "Lead Report"
+require_any = ["email", "whatsapp"]   # only businesses we can write to go into the Sheet
+checkpoint_minutes = 20
+
+[filters]
+require_contact = true
+exclude_closed = true
+allow_unmatched_categories = false
+# Chains and franchises decide centrally - poor leads. (Brands the open data knows are also skipped automatically.)
+exclude_chains = [
+  "mcdonald", "starbucks", "chick-fil-a", "taco bell", "wendy's", "burger king", "subway", "chipotle", "panera",
+  "dunkin", "domino", "pizza hut", "papa john", "little caesars", "sonic drive", "whataburger", "jack in the box",
+  "in-n-out", "five guys", "shake shack", "olive garden", "applebee", "chili's", "ihop", "denny's", "waffle house",
+  "buffalo wild wings", "cheesecake factory", "texas roadhouse", "outback", "red lobster", "p.f. chang",
+  "panda express", "raising cane", "sweetgreen", "cava", "dutch bros", "peet's", "tim hortons", "krispy kreme",
+  "jersey mike", "jimmy john", "firehouse subs", "wingstop", "popeyes", "kfc", "arby", "dairy queen", "culver",
+  "cracker barrel", "red robin", "longhorn steakhouse", "golden corral", "first watch", "black bear diner",
+  "great clips", "supercuts", "sport clips", "fantastic sams", "cost cutters", "regis salon", "drybar", "ulta",
+  "european wax center", "hand & stone", "hand and stone", "massage envy", "elements massage", "the joint chiropractic",
+  "planet fitness", "la fitness", "anytime fitness", "24 hour fitness", "orangetheory", "gold's gym", "crunch fitness",
+  "life time", "equinox", "blink fitness", "snap fitness", "pure barre", "club pilates", "f45", "solidcore",
+  "burn boot camp", "9round", "ufc gym", "ymca", "xponential", "corepower yoga", "yogasix", "cyclebar", "stretchlab",
+  "title boxing", "eos fitness", "vasa fitness", "chuze fitness", "youfit", "tiger schulmann", "premier martial arts",
+  "marriott", "hilton", "hyatt", "holiday inn", "hampton inn", "best western", "comfort inn", "comfort suites",
+  "la quinta", "motel 6", "days inn", "super 8", "courtyard by marriott", "fairfield inn", "residence inn",
+  "embassy suites", "doubletree", "sheraton", "westin", "quality inn", "red roof", "extended stay", "springhill suites",
+  "homewood suites", "home2 suites", "candlewood", "staybridge", "wyndham", "ramada", "travelodge", "econo lodge",
+  "sleep inn", "four seasons", "ritz-carlton", "intercontinental", "crowne plaza",
+  "jiffy lube", "valvoline", "firestone", "goodyear", "discount tire", "pep boys", "midas", "meineke", "take 5",
+  "mister car wash", "maaco", "caliber collision", "safelite", "christian brothers", "monro", "mavis", "les schwab",
+  "petsmart", "petco", "banfield", "vca animal", "camp bow wow", "dogtopia",
+]
+exclude_name_words = ["adult", "erotic", "strip club", "gentlemen's club", "escort", "cannabis", "dispensary", "smoke shop",
+                      "vape"]
+
+[plan]
+days = 7                 # each city is split into 7 parts, the centre first
+daily_target = "auto"
+order = "center_out"
+min_cell_km = 1.0
+max_cell_km = 8.0
+split_threshold = 60
+finish_scheduled_part = true
+
+[compliance]
+mode = "open-data"       # Overture Maps + OpenStreetMap + the businesses' own websites (no Google scraping)
+
+[open_data]
+min_confidence = 0.5
+refresh_days = 30
+exclude_codes = ["internet_cafe", "cafeteria", "hookah_bar", "gas_station", "convenience_store", "hostel"]
+
+[enrich]
+website = true
+max_pages_per_site = 6
+social_search = false
+instagram_profile = false
+check_email_mx = true
+role_email_candidates = false   # no guessed info@ addresses: every bounce costs a mailbox its reputation
+email_hunt = true
+email_archive = true      # sites that do not answer us: their archived pages from Common Crawl (open web archive)
+email_search = false      # no reading of search-engine result pages (their terms forbid it; BRAVE_API_KEY is the official way)
+workers = 6               # websites read at the same time (the tablet shares its memory with two other robots)
+site_interval_s = 2.0
+
+[crawler]
+bot_name = "WorldReachBot"
+contact_url = ""
+
+[runtime]
+time_budget_minutes = 120
+safety_margin_minutes = 6
+use_curl_cffi = false
