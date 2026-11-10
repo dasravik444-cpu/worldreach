@@ -36,7 +36,7 @@ def _common(ap):
 
 
 def build_parser() -> argparse.ArgumentParser:
-    ap = argparse.ArgumentParser(prog="python -m leadgen", description="Review business lead generation " + __version__)
+    ap = argparse.ArgumentParser(prog="python -m leadgen", description="WorldReach lead finder " + __version__)
     sub = ap.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("run", help="run the daily cycle")
     _common(r)
@@ -263,7 +263,7 @@ def cmd_doctor(cfg, args) -> int:
         print(f"[{'OK' if good else 'FAIL'}] {name}" + (f" - {detail}" if detail else ""))
         ok = ok and good
 
-    print(f"Review business lead generation {__version__}  config={args.config}  country={cfg['campaign']['country']}")
+    print(f"WorldReach lead finder {__version__}  config={args.config}  country={cfg['campaign']['country']}")
     check("config valid", True, f"{len(cfg.categories)} active categories, area {cfg['area']['name']} r={cfg['area']['radius_km']} km")
     sid = cfg.sheet_id
     has_key = bool(os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON") or os.environ.get("GOOGLE_SERVICE_ACCOUNT_FILE")

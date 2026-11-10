@@ -11,23 +11,52 @@
   "currency": "$",
   "show_prices": true,
   "plans": [
-    {"name": "Reviews", "price": 149, "per": "month",
-     "for": "Turn happy visits into Google reviews",
-     "items": ["Review request after every visit, stay or class", "Print-ready QR code for the counter and receipts",
-               "Everyone is asked the same way, as Google requires", "Monthly report: new reviews and rating"]},
-    {"name": "Retention", "price": 299, "per": "month", "popular": true,
-     "for": "Bring customers back, and keep them",
-     "items": ["Everything in Reviews", "Win-back series to customers who stopped coming",
-               "Come-back reminders when a customer is due", "You approve every message before it goes out",
-               "Monthly report: who came back"]},
-    {"name": "Complete", "price": 499, "per": "month",
-     "for": "The whole follow-up, off your desk",
-     "items": ["Everything in Retention", "Polite reminders for missed payments and renewals",
-               "Follow-up to new enquiries that went quiet", "Birthday and anniversary notes",
-               "A call with us every month"]}
+    {
+      "name": "Reviews",
+      "price": 149,
+      "per": "month",
+      "for": "Turn happy visits into Google reviews",
+      "items": [
+        "Review request after every visit, stay or class",
+        "Print-ready QR code for the counter and receipts",
+        "Everyone is asked the same way, as Google requires",
+        "Monthly report: new reviews and rating"
+      ]
+    },
+    {
+      "name": "Retention",
+      "price": 299,
+      "per": "month",
+      "popular": true,
+      "for": "Bring customers back, and keep them",
+      "items": [
+        "Everything in Reviews",
+        "Win-back series to customers who stopped coming",
+        "Come-back reminders when a customer is due",
+        "You approve every message before it goes out",
+        "Monthly report: who came back"
+      ]
+    },
+    {
+      "name": "Complete",
+      "price": 499,
+      "per": "month",
+      "for": "The whole follow-up, off your desk",
+      "items": [
+        "Everything in Retention",
+        "Polite reminders for missed payments and renewals",
+        "Your list refreshed every week, not every month",
+        "Changes to your messages within a day",
+        "A call with us every month"
+      ]
+    }
   ],
-  "sprint": {"name": "Win-Back Sprint", "price": 399, "per": "one time",
-             "text": "Not ready for a monthly plan? One 30-day campaign to your list of past customers: we write it, send it and hand you every reply."},
+  "sprint": {
+    "name": "Win-Back Sprint",
+    "price": 399,
+    "per": "one time",
+    "text": "Not ready for a monthly plan? One 30-day campaign to your list of past customers: we write it, send it and hand you every reply."
+  },
   "terms": "No contract. Cancel any time. Setup is included.",
-  "channels": "Messages go out by e-mail, from your own name. Text messages (SMS) and WhatsApp can be added where your customers have agreed to them; carrier fees are passed on at cost."
+  "channels": "Messages go out by e-mail, in your name. Text messages (SMS) or WhatsApp can be set up as an extra where your customers have agreed to them; carrier fees are passed on at cost."
 }

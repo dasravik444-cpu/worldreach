@@ -71,4 +71,4 @@ the report the brochure promises: send it to the client every month.
 | "You approve every message", "every answer comes to you", monthly report | built |
 | Print-ready QR code for reviews | make it from the review link with any QR tool (or ask me for a card) |
 | Text messages (SMS), WhatsApp to customers | **not built**: an add-on to set up per client (US: registered sender needed) |
-| Follow-up to new enquiries, birthday notes (the "Complete" plan) | **not built yet**: tell me when the first client wants them |
+| Weekly list refresh, quick changes to texts, a monthly call (the "Complete" plan) | your own time: plan for it |

@@ -234,7 +234,7 @@ def cmd_emails(a) -> int:
     store = open_store()
     try:
         eng = Engine(o, store, S.mailboxes(settings), markets, sheet_id=settings.get("WR_SHEET_ID", ""), live=live,
-                     max_emails=max_emails, bcc=a.copy_to, only_box=a.box, test_to=getattr(a, "test_to", ()))
+                     max_emails=max_emails, bcc=a.copy_to, only_box=a.box)
         code, summary = eng.run()
     finally:
         store.close()
@@ -257,15 +257,14 @@ def print_summary(summary: dict, sent_log: list) -> None:
 
 
 def cmd_test(a) -> int:
-    a.dry_run, a.check, a.max, a.copy_to = False, False, None, ""
-    with_live = argparse.Namespace(**{**vars(a), "test_to": a.addresses})
-    settings, o, markets = load_all()
+    """The spam test: the next first e-mail from every mailbox, only to the owner's own addresses."""
     from .outreach.engine import Engine
 
+    settings, o, markets = load_all()
     store = open_store()
     try:
         eng = Engine(o, store, S.mailboxes(settings), markets, sheet_id=settings.get("WR_SHEET_ID", ""), live=True,
-                     only_box=with_live.box, test_to=a.addresses)
+                     only_box=a.box, test_to=a.addresses)
         code, summary = eng.run()
     finally:
         store.close()
