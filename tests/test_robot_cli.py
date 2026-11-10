@@ -40,6 +40,8 @@ def test_emails_come_before_the_other_jobs_and_a_switched_off_job_never_runs():
     now = ts("2026-11-11 08:36")
     assert robot.pick_due(now, {}, {})[0].name == "emails"
     done = {"jobs": {"emails": {"slot": ts("2026-11-11 08:35")}}}
+    assert robot.pick_due(now, done, {})[0].name == "clients"
+    done["jobs"]["clients"] = {"slot": ts("2026-11-11 08:20")}
     assert robot.pick_due(now, done, {})[0].name == "update"
     assert robot.pick_due(now, done, {"ROBOT_AUTO_UPDATE": "no", "ROBOT_BACKUP": "no", "ROBOT_LEADS": "no"}) is None
 

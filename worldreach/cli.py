@@ -15,6 +15,7 @@
     outlook-login N       sign mailbox N (an Outlook address) in, once
     dns DOMAIN            is a sending domain set up for delivery (SPF, DKIM, DMARC)?
     whatsapp ...          the WhatsApp queue for the tablet (list | next | mark | test)
+    client ...            the follow-ups we run for a client (new | list | preview | run | report | stop)
     brochure              build marketing/brochure.pdf again (after changing marketing/brochure.json)
 """
 from __future__ import annotations
@@ -640,6 +641,101 @@ def cmd_whatsapp(a) -> int:
         return 5
 
 
+# ---------------------------------------------------------------------------------------------------- clients
+def clients_dir() -> Path:
+    return Path(os.environ.get("WR_CLIENTS_DIR") or ROOT / "clients-data")
+
+
+def cmd_client(a) -> int:
+    """The service we sell, run for a client (worldreach/clients/)."""
+    from .clients.campaigns import CLIENT_TOML, Client, ClientError
+    from .mail import open_mailbox
+
+    base = clients_dir()
+    if a.action == "new":
+        folder = base / a.id
+        if (folder / "client.toml").exists():
+            print(f"{folder} exists already.")
+            return 1
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / "client.toml").write_text(CLIENT_TOML.replace("{id}", a.id), encoding="utf-8")
+        print(f"Made {folder}/client.toml - fill it in, save the client's export as {folder}/customers.csv,\n"
+              f"then:  wr client preview {a.id}")
+        return 0
+    if a.action == "list" or (a.action == "run" and a.all):
+        ids = sorted(p.parent.name for p in base.glob("*/client.toml"))
+        if a.action == "list":
+            print("\n".join(ids) if ids else "No clients yet ( wr client new NAME ).")
+            return 0
+    else:
+        ids = [a.id]
+    if not ids or ids == [None]:
+        print("Which client? ( wr client list )" if a.action != "run" else "No clients yet.")
+        return 0 if a.action == "run" else 2
+    settings = S.load()
+    boxes = {b.index: b for b in S.mailboxes(settings)}
+    worst = 0
+    for cid in ids:
+        try:
+            client = Client(base / cid)
+        except ClientError as exc:
+            print(exc)
+            worst = 1
+            continue
+        try:
+            if a.action == "stop":
+                print("Stopped: never written to again." if client.stop(a.email, "stopped by hand") else "Was stopped already.")
+            elif a.action == "report":
+                print_client_report(client.report(a.days))
+            elif a.action == "preview":
+                problems = client.problems()
+                due = client.due_today() if not any("customers.csv" in p for p in problems) else []
+                print(f"{client.cfg['name'] or cid}: {len(client.customers())} customers in the list, "
+                      f"{len(due)} message(s) due today.")
+                for p in problems:
+                    print(f"  ! {p}")
+                shown = set()
+                for d in due:
+                    if (d.campaign, d.step) in shown:
+                        continue
+                    shown.add((d.campaign, d.step))
+                    n = sum(1 for x in due if (x.campaign, x.step) == (d.campaign, d.step))
+                    print(f"\n--- {d.campaign} {d.step}: {n} customer(s), e.g. to {d.customer.email} ---\n"
+                          f"Subject: {d.subject}\n\n{d.body}")
+                if not client.cfg["approved"]:
+                    print("\nNothing is sent until client.toml says  approved = true .")
+                worst = max(worst, 1 if problems else 0)
+            else:                       # run
+                problems = client.problems()
+                box = boxes.get(int(client.cfg["mailbox"]))
+                if problems or box is None or box.problem():
+                    print(f"{cid}: not run - " + "; ".join(problems or [f"mailbox {client.cfg['mailbox']} is not set up"]))
+                    worst = max(worst, 1)
+                    continue
+                stats = client.run(open_mailbox(box), live=not a.dry_run)
+                print(f"{cid}: due {stats['due']}, sent {stats['sent']}, failed {stats['failed']}, answers "
+                      f"{stats['replies']}, stops {stats['stops']}" + (f" - {stats['note']}" if stats["note"] else ""))
+        except ClientError as exc:
+            print(f"{cid}: {exc}")
+            worst = 1
+        finally:
+            client.close()
+    return worst
+
+
+def print_client_report(r: dict) -> None:
+    m = r["messages"]
+    print(f"{r['client']}: the last {r['days']} days\n"
+          f"  messages sent: {sum(m.values())} to {r['people']} customers  (review requests {m.get('review', 0)}, "
+          f"come-back reminders {m.get('comeback', 0)}, win-back notes {m.get('winback', 0)}, payment reminders "
+          f"{m.get('payment', 0)})\n"
+          f"  came back after a note: {len(r['returns'])}    answers: {len(r['replies'])}    asked to stop: {r['stops']}")
+    for x in r["returns"][-30:]:
+        print(f"    back: {x['email']}  (visit {x['visit']}, after a {x['after']} note)")
+    for x in r["replies"][-30:]:
+        print(f"    answer from {x['email']}: \"{x['text'][:160]}\"")
+
+
 def cmd_brochure(a) -> int:
     return subprocess.call([sys.executable, str(ROOT / "marketing" / "build_brochure.py"), *a.rest], cwd=ROOT)
 
@@ -690,6 +786,13 @@ def build_parser() -> argparse.ArgumentParser:
     wm.add_argument("key")
     wm.add_argument("number")
     wm.add_argument("result", choices=["Sent", "Not on WhatsApp", "Replied", "Interested", "Not interested", "Skip"])
+    cl = sub.add_parser("client", help="the follow-ups we run for a client: new | list | preview | run | report | stop")
+    cl.add_argument("action", choices=["new", "list", "preview", "run", "report", "stop"])
+    cl.add_argument("id", nargs="?", default=None, help="the client's folder name, e.g. lotus-yoga")
+    cl.add_argument("email", nargs="?", default="", help="for stop: the customer's address")
+    cl.add_argument("--all", action="store_true", help="run: every client")
+    cl.add_argument("--dry-run", action="store_true", help="run: only count what is due")
+    cl.add_argument("--days", type=int, default=30)
     br = sub.add_parser("brochure", help="build the overview PDF again")
     br.add_argument("rest", nargs=argparse.REMAINDER)
     rb = sub.add_parser("robot", help="the robot's timetable: serve | status | log | run JOB")
@@ -706,7 +809,8 @@ def main(argv=None) -> int:
         return robot.main(a.rest)
     run = {"check": cmd_check, "preview": cmd_preview, "emails": cmd_emails, "test": cmd_test, "leads": cmd_leads,
            "hunt": cmd_hunt, "status": cmd_status, "report": cmd_report, "resume": cmd_resume,
-           "outlook-login": cmd_outlook_login, "dns": cmd_dns, "whatsapp": cmd_whatsapp, "brochure": cmd_brochure}[a.cmd]
+           "outlook-login": cmd_outlook_login, "dns": cmd_dns, "whatsapp": cmd_whatsapp, "brochure": cmd_brochure,
+           "client": cmd_client}[a.cmd]
     try:
         if a.cmd in ("emails", "leads", "hunt"):
             try:
