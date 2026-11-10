@@ -1,0 +1,37 @@
+# How WorldReach writes to businesses. Your name, address and mailboxes are NOT here: they are in settings.txt on
+# your device ( wr settings ). After a change here, the tablet takes it with  wr update .
+
+[email]
+enabled = true
+# Follow-ups: days after the first e-mail. Any reply stops them. They count towards each mailbox's daily limit:
+# with [2, 5] every new business costs up to 3 e-mails, so 500 a day reaches about 170 new businesses a day.
+follow_up_days = [2, 5]
+# The business's own office hours, in its own time zone, on its working days.
+window_start = "08:30"
+window_end = "16:30"
+days = ["mon", "tue", "wed", "thu", "fri"]
+# Nothing goes out on these dates (public holidays in the US and UK).
+skip_dates = ["2026-11-26", "2026-11-27", "2026-12-24", "2026-12-25", "2026-12-26", "2026-12-28", "2026-12-31",
+              "2027-01-01", "2027-01-18", "2027-02-15", "2027-04-02", "2027-04-05", "2027-05-31", "2027-07-05"]
+# The kinds of business written to first (the strongest fit for what we sell).
+boost_categories = ["gym", "studio", "martial_arts", "salon", "spa"]
+min_gap_seconds = 45      # between two e-mails from the same mailbox, at least
+max_gap_seconds = 240
+
+# The warm-up: the most e-mails ONE mailbox may send on its 1st, 2nd, 3rd ... good sending day.
+# Your plan: 50, 100, 200, then up to 500. A mailbox only moves up after a day that went well (see
+# docs/DELIVERABILITY.md), and a brake holds or lowers it by itself.
+[ramp]
+gmail = [50, 100, 200, 250, 300, 350, 400, 450, 500]
+# A new Outlook.com account may send far less (Microsoft gives no figure; about 300 a day once it is trusted).
+outlook = [20, 40, 60, 90, 120, 160, 200, 250, 300]
+smtp = [30, 60, 100, 150, 200, 250, 300, 400, 500]
+
+[ramp.max_24h]
+gmail = 480               # Gmail stops a free account for a day at 500 in ANY 24 hours; 20 are kept for your own replies
+outlook = 280
+smtp = 480
+
+[auto_reply]
+enabled = true            # a plain "yes, send it" gets the overview PDF back at once, in the same conversation
+attachment = "marketing/brochure.pdf"

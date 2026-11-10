@@ -162,7 +162,7 @@ EN = {
     "follow_ups": [
         """{greeting}
 
-A short follow-up on my note about {topic} at {business}. In plain numbers: {math}. We write the messages, you approve every word before anything goes out, and you see each answer.
+A short follow-up on my note about {topic}. In plain numbers: {math}. We write the messages, you approve every word before anything goes out, and you see each answer.
 
 {cta2}
 
@@ -303,7 +303,7 @@ def context(lead, o: dict, *, mailbox_name: str = "") -> dict:
     ctx["cta2"] = render(pick(t["cta2"], seed + "|c2"), ctx)
     rules = pack.rules
     source = t["source_line"] if rules.privacy_notice else (t["offer_line"] if rules.postal_address_required else "")
-    ctx["source_line"] = render(source, ctx)
+    ctx["source_line"] = (render(source, ctx) + " ") if source else ""
     ctx["footer"] = render(t["footer"], ctx)
     return ctx
 

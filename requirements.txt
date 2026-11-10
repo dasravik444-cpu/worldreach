@@ -1,7 +1,9 @@
-# Core runtime (pure Python, installs on Ubuntu, GitHub Actions and Termux/PRoot)
+# Everything WorldReach needs (pure Python or with ready-made builds for the tablet's Ubuntu inside Termux).
 requests>=2.31
 beautifulsoup4>=4.12
 phonenumbers>=8.13
 google-auth>=2.29
 tzdata>=2024.1
 dnspython>=2.6
+# Reads the Overture Maps open-data places; without it the lead search falls back to OpenStreetMap.
+duckdb>=1.1

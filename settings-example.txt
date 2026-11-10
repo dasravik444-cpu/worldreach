@@ -1,0 +1,51 @@
+# Your settings. Type each value right after the = sign (no quotes). Save: CTRL then o, Enter. Close: CTRL then x.
+# This file stays on your device: it is never uploaded anywhere.
+
+# 1. Your Google Sheet's ID: in the Sheet's address, the long part between /d/ and /edit
+WR_SHEET_ID=
+
+# 2. Who writes. The name and business are shown as the sender and under every e-mail.
+SENDER_NAME=
+SENDER_BUSINESS=Aurenflow
+# Your WhatsApp / phone number with the country code (+91 ...), shown under every e-mail
+SENDER_PHONE=
+# Your postal address, on one line. US and Canadian law require it in every sales e-mail.
+POSTAL_ADDRESS=
+# Optional: a link where a business can pick a time for a call (Calendly, Cal.com). Only sent to businesses that
+# answered - never in a first e-mail.
+BOOKING_LINK=
+# Optional: where "a business replied" alerts go (empty = the mailbox that got the reply)
+NOTIFY_EMAIL=
+
+# 3. Your mailboxes (up to 6). Each one sends its own share and warms up by itself.
+#    Gmail: MAILBOX_n=gmail, its address, and a 16-letter app password
+#           (myaccount.google.com/apppasswords, made while signed in to THAT Gmail, 2-Step Verification on).
+MAILBOX_1=gmail
+MAILBOX_1_ADDRESS=
+MAILBOX_1_PASSWORD=
+
+MAILBOX_2=gmail
+MAILBOX_2_ADDRESS=
+MAILBOX_2_PASSWORD=
+
+#    Outlook / Hotmail: MAILBOX_n=outlook and its address. No password here: after saving, type  wr outlook-login 3
+#    It needs OUTLOOK_CLIENT_ID once (docs/OUTLOOK.md shows how to get it, free, 5 minutes).
+MAILBOX_3=
+MAILBOX_3_ADDRESS=
+OUTLOOK_CLIENT_ID=
+
+#    A mailbox on your own domain (Google Workspace, Zoho ...): MAILBOX_n=smtp, address, app password, and
+#    MAILBOX_n_SMTP_HOST=smtp.yourprovider.com   MAILBOX_n_IMAP_HOST=imap.yourprovider.com
+
+# 4. Which countries: us = United States, gb = United Kingdom, ie = Ireland
+MARKETS=us,gb,ie
+
+# 5. The big switch. no = everything is prepared and shown in the Sheet's "Email Preview" tab, nothing is sent.
+#    yes = e-mails go out. Switch to yes only after  wr check  and  wr test  looked right.
+LIVE=no
+
+# The robot ( wr on ): yes/no switches for its jobs, and your time zone for its timetable.
+ROBOT_EMAILS=yes
+ROBOT_LEADS=yes
+ROBOT_AUTO_UPDATE=yes
+ROBOT_TZ=Asia/Kolkata
