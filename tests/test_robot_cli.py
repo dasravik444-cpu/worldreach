@@ -88,12 +88,17 @@ def test_status_and_report_read_the_memory(tmp_path, monkeypatch, capsys):
 
 
 def test_the_shipped_files_are_consistent():
-    for sh in sorted((ROOT / "android").glob("*.sh")) + [ROOT / "scripts" / "run.sh"]:
+    for sh in sorted((ROOT / "android").glob("*.sh")) + sorted((ROOT / "server").glob("*.sh")) + [ROOT / "scripts" / "run.sh"]:
         assert subprocess.run(["bash", "-n", str(sh)]).returncode == 0, sh
     o = C.load(ROOT / "config" / "outreach.toml")
     assert o["ramp"]["gmail"][:3] == [50, 100, 200] and o["ramp"]["gmail"][-1] == 500 and o["mode"] == "dry-run"
     example = S.read_file(ROOT / "settings-example.txt")
     assert example["LIVE"] == "no" and example["MARKETS"] == "us,gb,ie" and "MAILBOX_1_PASSWORD" not in example
+    assert S.mailboxes(example) == []                 # slots left empty are simply not there
+    filled = {**example, **{f"MAILBOX_{i}_ADDRESS": f"m{i}@x.com" for i in (1, 2, 4, 5)}}
+    boxes = S.mailboxes(filled)                       # 3 Gmail + 2 Outlook slots; number 3 left empty
+    assert [(b.index, b.kind) for b in boxes] == [(1, "gmail"), (2, "gmail"), (4, "outlook"), (5, "outlook")]
+    assert all(b.problem() for b in boxes)            # ... and each still needs its password / sign-in
     for code in ("us", "gb", "ie"):
         m = C.load_market(code)
         assert len(m.cities) == len(C.fleet(code)) and len({p for p in m.cities}) == len(m.cities)   # prefixes unique

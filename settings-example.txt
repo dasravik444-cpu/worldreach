@@ -17,9 +17,10 @@ BOOKING_LINK=
 # Optional: where "a business replied" alerts go (empty = the mailbox that got the reply)
 NOTIFY_EMAIL=
 
-# 3. Your mailboxes (up to 6). Each one sends its own share and warms up by itself.
-#    Gmail: MAILBOX_n=gmail, its address, and a 16-letter app password
-#           (myaccount.google.com/apppasswords, made while signed in to THAT Gmail, 2-Step Verification on).
+# 3. Your mailboxes (up to 6). Each one sends its own share and warms up by itself. Leave the ones you do not have
+#    empty.
+#    Gmail: its address and a 16-letter app password (myaccount.google.com/apppasswords, made while signed in to
+#    THAT Gmail, with 2-Step Verification on).
 MAILBOX_1=gmail
 MAILBOX_1_ADDRESS=
 MAILBOX_1_PASSWORD=
@@ -28,14 +29,20 @@ MAILBOX_2=gmail
 MAILBOX_2_ADDRESS=
 MAILBOX_2_PASSWORD=
 
-#    Outlook / Hotmail: MAILBOX_n=outlook and its address. No password here: after saving, type  wr outlook-login 3
-#    It needs OUTLOOK_CLIENT_ID once (docs/OUTLOOK.md shows how to get it, free, 5 minutes).
-MAILBOX_3=
+MAILBOX_3=gmail
 MAILBOX_3_ADDRESS=
+MAILBOX_3_PASSWORD=
+
+#    Outlook / Hotmail: only the address. No password here: after saving, type  wr outlook-login 4  (and 5).
+#    They need OUTLOOK_CLIENT_ID once, the same for both (docs/OUTLOOK.md shows how to get it: free, 10 minutes).
+MAILBOX_4=outlook
+MAILBOX_4_ADDRESS=
+MAILBOX_5=outlook
+MAILBOX_5_ADDRESS=
 OUTLOOK_CLIENT_ID=
 
-#    A mailbox on your own domain (Google Workspace, Zoho ...): MAILBOX_n=smtp, address, app password, and
-#    MAILBOX_n_SMTP_HOST=smtp.yourprovider.com   MAILBOX_n_IMAP_HOST=imap.yourprovider.com
+#    A mailbox on your own domain (Google Workspace, Zoho ...): MAILBOX_6=smtp, address, app password, and
+#    MAILBOX_6_SMTP_HOST=smtp.yourprovider.com   MAILBOX_6_IMAP_HOST=imap.yourprovider.com
 
 # 4. Which countries: us = United States, gb = United Kingdom, ie = Ireland
 MARKETS=us,gb,ie

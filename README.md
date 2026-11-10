@@ -22,6 +22,7 @@ studios, martial arts schools, salons and spas, hotels, restaurants, groomers an
 |---|---|
 | [docs/SETUP.md](docs/SETUP.md) | **start here**: the tablet, step by step |
 | [docs/OUTLOOK.md](docs/OUTLOOK.md) | adding an Outlook / Hotmail mailbox |
+| [docs/HOSTING.md](docs/HOSTING.md) | tablet or online server: which, when, and how to move |
 | [docs/DELIVERABILITY.md](docs/DELIVERABILITY.md) | staying out of the spam folder: what the system does, what you must do, the honest limits |
 | [docs/COMPLIANCE.md](docs/COMPLIANCE.md) | the rules per country, and which European countries can be written to |
 | [docs/WHATSAPP.md](docs/WHATSAPP.md) | the WhatsApp number |

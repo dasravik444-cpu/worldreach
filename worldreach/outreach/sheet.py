@@ -6,6 +6,7 @@ written here).
   Replies         every reply with the next step (call, WhatsApp, removed)
   WhatsApp Queue  messages to send with one tap; the owner fills Result
   Do Not Contact  opt-outs and bounces; the owner can add e-mails, numbers or @domains
+  Dashboard       everything at a glance, rewritten every run: mailboxes, businesses, replies, what to do now
   Outreach Report one line per run
 """
 from __future__ import annotations
@@ -23,6 +24,7 @@ TABS = {
     "whatsapp": ["Date", "Lead ID", "Business", "Category", "Area", "Number", "Why", "Message", "Open Chat", "Result",
                  "Key"],
     "dnc": ["Email or Phone", "Reason", "Added", "Source"],
+    "dashboard": ["What", "Now", "Details"],
     "report": ["Date", "Time", "Mode", "Mailboxes", "Limit Today", "Sent Today", "New E-mails", "Follow-ups",
                "Interested", "Not Interested", "Other Replies", "Bounces", "Skipped Addresses", "WhatsApp Queued",
                "Notes"],

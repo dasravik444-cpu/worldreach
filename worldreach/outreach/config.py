@@ -64,7 +64,7 @@ DEFAULTS: dict = {
     "whatsapp": {"enabled": True, "start_per_day": 5, "step": 5, "step_every_days": 3, "max_per_day": 25,
                  "max_waiting_days": 5},
     "tabs": {"outreach": "Outreach", "preview": "Email Preview", "replies": "Replies", "whatsapp": "WhatsApp Queue",
-             "dnc": "Do Not Contact", "report": "Outreach Report"},
+             "dnc": "Do Not Contact", "report": "Outreach Report", "dashboard": "Dashboard"},
     "texts": {},                          # replace a text: [texts] first = "...", subjects = [...], see templates.py
     "hooks": {},
 }

@@ -34,8 +34,8 @@ wr settings
 ```
 
 ```
-MAILBOX_3=outlook
-MAILBOX_3_ADDRESS=yourname@outlook.com
+MAILBOX_4_ADDRESS=yourfirst@outlook.com
+MAILBOX_5_ADDRESS=yoursecond@outlook.com
 OUTLOOK_CLIENT_ID=the-code-you-copied
 ```
 
@@ -44,10 +44,10 @@ Save (CTRL o, Enter, CTRL x).
 ## 3. Sign in (once per Outlook mailbox)
 
 ```
-wr outlook-login 3
+wr outlook-login 4
 ```
 
-It shows a web address and a short code. Open the address in the browser, type the code, sign in **as that Outlook
+(and afterwards `wr outlook-login 5` for the second one). It shows a web address and a short code. Open the address in the browser, type the code, sign in **as that Outlook
 address**, tap **Accept**. Termux then says "Signed in". The sign-in is kept on the tablet (`secrets/`) and renews
 by itself; if Microsoft ever ends it, `wr status` says so and you run the command again.
 

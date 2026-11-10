@@ -324,3 +324,22 @@ def test_whatsapp_queue_takes_published_numbers_of_businesses_email_cannot_reach
     engine(store, clock, [box(1)], {mb.address: mb}, client=client).run()
     assert status_of(session, "Leads US", "AUS-1") == "Not interested (opted out)"
     assert len(tab(session, "WhatsApp Queue")) == 1
+
+
+def test_the_dashboard_tab_shows_everything_at_a_glance(tmp_path):
+    client, session = sheet({"Leads US": [lead_row(i) for i in range(1, 9)]})
+    clock = Clock()
+    a = FakeMailbox("sender1@gmail.com", clock=clock)
+    store = Store(str(tmp_path / "o.sqlite"))
+    boxes = [box(1), MailboxConfig(2, "outlook", "me@outlook.com")]          # the second one is not set up yet
+    engine(store, clock, boxes, {a.address: a}, client=client, max_emails=3).run()
+    a.inbox.append(InboxEvent("reply", a.to()[0], "other", "Who is this?"))
+    clock.sleep(3600)
+    engine(store, clock, boxes, {a.address: a}, client=client, max_emails=0).run()
+    rows = {r["What"]: r for r in tab(session, "Dashboard")}
+    assert rows["Mode"]["Now"].startswith("LIVE")
+    assert rows["Mailbox 1 (gmail) sender1@gmail.com"]["Now"] == "sent 3 of 50 today"
+    assert rows["Mailbox 2 (outlook) me@outlook.com"]["Now"].startswith("NOT SET UP: OUTLOOK_CLIENT_ID")
+    assert rows["Businesses written to"]["Now"] == 3 and rows["Replies"]["Details"].startswith("interested 0; other 1")
+    assert rows["Businesses in Leads US"]["Now"] == 8 and rows["Businesses in Leads US"]["Details"].endswith(": 5")
+    assert "answer the businesses that replied (1" in rows["What to do now"]["Now"]

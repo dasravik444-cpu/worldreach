@@ -841,8 +841,53 @@ class Engine:
                          display_phone(nums[0]) if nums else "", t["lead_key"]])
         return rows
 
+    def _dashboard_rows(self) -> list[list]:
+        """Everything at a glance, for the Dashboard tab (the owner reads it on the phone)."""
+        e = self.o["email"]
+        now, day, tz = self.now(), self._day(), e["day_tz"]
+        india = datetime.fromtimestamp(now, get_tz("Asia/Kolkata")).strftime("%d %b %H:%M")
+        rows = [["Last run", f"{india} India time", f"{fmt_local(tz, now)} New York time"],
+                ["Mode", "LIVE - e-mails go out" if self.live else "DRY-RUN - nothing is sent",
+                 "" if self.live else "LIVE=yes in the settings switches sending on"]]
+        for box in self.boxes:
+            d = ramp.describe(self.store, self.o, box, day, now)
+            bad, sent = d["bounces"]
+            cap = d["cap_today"] if d["cap_today"] is not None else d["steps"][min(d["step"], len(d["steps"])) - 1]
+            problem = box.problem()
+            state = (f"NOT SET UP: {problem}" if problem else
+                     f"PAUSED until {fmt_local(tz, d['paused_until'])}" if d["paused_until"] else
+                     f"sent {d['sent_today']} of {cap} today")
+            details = (f"warm-up step {d['step']} of {len(d['steps'])}; last 24 hours {d['sent_24h']}"
+                       + (f"; bounced {bad} of {sent} ({100 * bad / sent:.1f}%)" if sent else "")
+                       + (f"; {d['pause_reason']}" if d["paused_until"] else ""))
+            rows.append([f"Mailbox {box.index} ({box.kind}) {box.address}", state, details])
+        t = {r["stage"]: r["n"] for r in self.store.q("SELECT stage, COUNT(*) AS n FROM threads GROUP BY stage")}
+        r = {x["kind"]: x["n"] for x in self.store.q("SELECT kind, COUNT(*) AS n FROM replies GROUP BY kind")}
+        due = self.store.scalar("SELECT COUNT(*) FROM threads WHERE stage='active' AND next_due<=?", (now,), 0)
+        rows += [["Businesses written to", sum(t.values()), f"waiting for a reply {t.get('active', 0)}; no reply after "
+                  f"all follow-ups {t.get('completed', 0) + t.get('no_reply', 0)}; bounced {t.get('bounced', 0)}"],
+                 ["Replies", sum(r.get(k, 0) for k in ("positive", "other", "negative")),
+                  f"interested {r.get('positive', 0)}; other {r.get('other', 0)}; not interested {r.get('negative', 0)}"],
+                 ["Follow-ups due now", due, "they go out in the businesses' office hours"]]
+        for m in self.markets.values():
+            mine = [ld for ld in self.leads if ld.market == m.code]
+            fresh = sum(1 for ld in mine if ld.fresh and ld.emails)
+            rows.append([f"Businesses in {m.leads_tab}", len(mine), f"with an e-mail and not written to yet: {fresh}"])
+        waiting = self.store.scalar("SELECT COUNT(*) FROM wa WHERE result=''", (), 0)
+        open_replies = self.store.scalar("SELECT COUNT(*) FROM threads WHERE stage='replied'", (), 0)
+        todo = []
+        if open_replies:
+            todo.append(f"answer the businesses that replied ({open_replies} in all, Replies tab)")
+        if waiting:
+            todo.append(f"send {waiting} WhatsApp message(s) (wr whatsapp)")
+        if any(row[1].startswith(("PAUSED", "NOT SET UP")) for row in rows if str(row[0]).startswith("Mailbox")):
+            todo.append("look at the mailbox marked PAUSED / NOT SET UP above")
+        rows.append(["What to do now", "; ".join(todo) or "nothing - it is working by itself", ""])
+        return rows
+
     def _write_sheet(self, sheet: OutreachSheet) -> None:
         tz = self.o["email"]["day_tz"]
+        sheet.rewrite("dashboard", self._dashboard_rows())
         sheet.rewrite("outreach", self._outreach_rows())
         sheet.rewrite("preview", self.preview)
         if self.new_replies:

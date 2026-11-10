@@ -47,7 +47,9 @@ A text editor opens. Move with the arrow keys and type after each `=`:
 - `POSTAL_ADDRESS` - your address on one line
 - `MAILBOX_1_ADDRESS` and `MAILBOX_1_PASSWORD` - the first Gmail and its 16-letter app password
   (made at myaccount.google.com/apppasswords **while signed in to that Gmail**, 2-Step Verification on)
-- the same for `MAILBOX_2`; for an Outlook address see docs/OUTLOOK.md
+- the same for `MAILBOX_2` and `MAILBOX_3` (leave a mailbox you do not have empty)
+- `MAILBOX_4_ADDRESS` and `MAILBOX_5_ADDRESS` - your two Outlook addresses; they need the steps in docs/OUTLOOK.md
+  (you can add them a day later: the Gmail mailboxes work without them)
 
 Leave `LIVE=no` for now. Save: **CTRL** then **o**, Enter. Close: **CTRL** then **x**.
 

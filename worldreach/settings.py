@@ -130,7 +130,7 @@ def mailboxes(settings: dict) -> list[MailboxConfig]:
     for i in range(1, MAX_MAILBOXES + 1):
         kind = str(settings.get(f"MAILBOX_{i}") or "").strip().lower()
         addr = str(settings.get(f"MAILBOX_{i}_ADDRESS") or "").strip()
-        if not kind and not addr:
+        if not addr:                    # a slot left empty in settings.txt is simply not there
             continue
         g = lambda name, default="": str(settings.get(f"MAILBOX_{i}_{name}") or default).strip()  # noqa: E731
         preset = PRESETS.get(kind, {})
