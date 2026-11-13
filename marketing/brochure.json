@@ -2,31 +2,102 @@
   "_comment": "The overview PDF (marketing/brochure.pdf). Change the words here, then: python marketing/build_brochure.py. Your phone and e-mail are NOT kept here (this repository is public): they are added only to your own copy, built with --phone and --email.",
   "brand": "Aurenflow",
   "tagline": "Customer growth for local businesses",
-  "edition": "INT-2026-11b",
-  "headline": "More sales from the customers you already have.",
-  "subline": "We follow up with your customers for you, so more of them come back and more of them leave you a great review.",
+  "edition": "INT-2026-11c",
+  "headline": "Bring old customers back. Win new ones.",
+  "subline": "We bring past customers back, keep your regulars coming, grow your Google reviews and get you seen by more people. The result: more sales.",
   "services": [
-    {"art": "sales", "title": "Boost your sales", "text": "Bring past customers back through your door."},
-    {"art": "reviews", "title": "Grow your Google reviews", "text": "Happy customers, asked at the right moment."},
-    {"art": "followup", "title": "Automatic follow-ups", "text": "Every customer hears from you. You lift no finger."},
-    {"art": "reminder", "title": "Rebooking reminders", "text": "A friendly nudge when it is time to come back."},
-    {"art": "winback", "title": "Win back lost customers", "text": "A warm welcome back for those who drifted away."},
-    {"art": "payment", "title": "Missed-payment reminders", "text": "Polite, private and always on time."}
+    {
+      "art": "sales",
+      "title": "Boost your sales",
+      "text": "Bring past customers back through your door."
+    },
+    {
+      "art": "reviews",
+      "title": "Grow your Google reviews",
+      "text": "Happy customers, asked at the right moment."
+    },
+    {
+      "art": "followup",
+      "title": "Automatic follow-ups",
+      "text": "Every customer hears from you. You lift no finger."
+    },
+    {
+      "art": "reminder",
+      "title": "Rebooking reminders",
+      "text": "A friendly nudge when it is time to come back."
+    },
+    {
+      "art": "winback",
+      "title": "Win back lost customers",
+      "text": "A warm welcome back for those who drifted away."
+    },
+    {
+      "art": "payment",
+      "title": "Missed-payment reminders",
+      "text": "Polite, private and always on time."
+    },
+    {
+      "art": "website",
+      "wide": true,
+      "title": "Need a website? We build that too.",
+      "text": "A fast, good-looking site that turns visitors into bookings, set up and looked after for you."
+    }
   ],
   "steps": [
-    {"art": "list", "title": "Share your customer list", "text": "One export from the system you already use."},
-    {"art": "approve", "title": "We write, you approve", "text": "In your name and your voice. Nothing goes out without your yes."},
-    {"art": "growth", "title": "Customers come back", "text": "Replies land in your inbox. A clear report every month."}
+    {
+      "art": "talk",
+      "title": "Tell us your challenges",
+      "text": "Quiet days, few reviews, customers drifting away."
+    },
+    {
+      "art": "dig",
+      "title": "We dig deep",
+      "text": "We study your customers, reviews and competitors."
+    },
+    {
+      "art": "approve",
+      "title": "We build your plan",
+      "text": "Share your customer list. We write, you approve."
+    },
+    {
+      "art": "growth",
+      "title": "You see results",
+      "text": "More visits, more reviews, a clear monthly report."
+    }
   ],
   "industries": [
-    {"icon": "gym", "label": "Gyms"},
-    {"icon": "yoga", "label": "Yoga & dance studios"},
-    {"icon": "karate", "label": "Martial arts schools"},
-    {"icon": "scissors", "label": "Salons & spas"},
-    {"icon": "bed", "label": "Hotels"},
-    {"icon": "cup", "label": "Restaurants & cafés"},
-    {"icon": "paw", "label": "Pet groomers"},
-    {"icon": "wrench", "label": "Garages"}
+    {
+      "icon": "gym",
+      "label": "Gyms"
+    },
+    {
+      "icon": "yoga",
+      "label": "Yoga & dance studios"
+    },
+    {
+      "icon": "karate",
+      "label": "Martial arts schools"
+    },
+    {
+      "icon": "scissors",
+      "label": "Salons & spas"
+    },
+    {
+      "icon": "bed",
+      "label": "Hotels"
+    },
+    {
+      "icon": "cup",
+      "label": "Restaurants & cafés"
+    },
+    {
+      "icon": "paw",
+      "label": "Pet groomers"
+    },
+    {
+      "icon": "wrench",
+      "label": "Garages"
+    }
   ],
   "promises": [
     "You approve every message before it goes out",

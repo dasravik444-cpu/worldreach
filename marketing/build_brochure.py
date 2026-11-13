@@ -146,6 +146,35 @@ ART = {
         f'<circle cx="114" cy="46" r="17" fill="{GOLD}"/>'
         f'<path d="M106 46 l6 6 l11 -12" fill="none" stroke="#fff" stroke-width="3.6"/>'
         f'<circle cx="40" cy="30" r="7" fill="{GOLD_L}"/><circle cx="52" cy="24" r="5" fill="{GOLD_L}"/>'),
+    "website": lambda: svg(
+        f'<rect x="20" y="20" width="120" height="84" rx="8" fill="#fff" stroke="{NAVY}" stroke-width="2.4"/>'
+        f'<path d="M20 36 V28 a8 8 0 0 1 8 -8 H132 a8 8 0 0 1 8 8 V36z" fill="{NAVY}"/>'
+        f'<circle cx="30" cy="28" r="2.6" fill="{GOLD}"/><circle cx="38" cy="28" r="2.6" fill="{GOLD_L}"/>'
+        f'<circle cx="46" cy="28" r="2.6" fill="{SKY_D}"/>'
+        f'<rect x="30" y="44" width="56" height="32" rx="4" fill="{SKY}"/>'
+        f'<path d="M34 72 L50 56 L60 66 L68 59 L82 72z" fill="{SKY_D}"/><circle cx="74" cy="52" r="4" fill="{GOLD}"/>'
+        f'<rect x="94" y="46" width="36" height="5" rx="2.5" fill="{NAVY}"/>'
+        f'<rect x="94" y="56" width="30" height="3.5" rx="1.7" fill="{SKY}"/>'
+        f'<rect x="94" y="63" width="34" height="3.5" rx="1.7" fill="{SKY}"/>'
+        f'<rect x="94" y="72" width="26" height="9" rx="4.5" fill="{GOLD}"/>'
+        f'<rect x="30" y="84" width="100" height="3.5" rx="1.7" fill="{SKY}"/>'
+        f'<rect x="30" y="91" width="70" height="3.5" rx="1.7" fill="{SKY}"/>'),
+    "talk": lambda: svg(
+        person(62, 66, NAVY, 1.0) + person(114, 66, GOLD, 1.0, hair="#6B4A32")
+        + f'<rect x="36" y="16" width="50" height="30" rx="10" fill="#fff" stroke="{NAVY}" stroke-width="2"/>'
+          f'<path d="M54 45 L56 54 L64 45z" fill="#fff" stroke="{NAVY}" stroke-width="2"/>'
+          f'<path d="M54 44.5 H65" stroke="#fff" stroke-width="3"/>'
+          f'<circle cx="49" cy="31" r="3" fill="{SKY_D}"/><circle cx="61" cy="31" r="3" fill="{SKY_D}"/>'
+          f'<circle cx="73" cy="31" r="3" fill="{SKY_D}"/>'
+          f'<rect x="96" y="20" width="40" height="26" rx="9" fill="{GOLD_L}"/><path d="M116 45 L112 53 L123 45z" fill="{GOLD_L}"/>'
+          f'<text x="116" y="39" text-anchor="middle" font-family="BSerif" font-weight="700" font-size="17" fill="{NAVY}">?</text>'),
+    "dig": lambda: svg(
+        f'<rect x="26" y="24" width="78" height="74" rx="6" fill="#fff" stroke="{NAVY}" stroke-width="2.4"/>'
+        f'<rect x="36" y="70" width="10" height="18" rx="1.5" fill="{SKY}"/><rect x="51" y="58" width="10" height="30" rx="1.5" fill="{SKY_D}"/>'
+        f'<rect x="66" y="46" width="10" height="42" rx="1.5" fill="{GOLD_L}"/><rect x="81" y="36" width="10" height="52" rx="1.5" fill="{GOLD}"/>'
+        f'<circle cx="104" cy="58" r="20" fill="#ffffff" fill-opacity=".55" stroke="{NAVY}" stroke-width="5"/>'
+        f'<path d="M118 72 L136 92" stroke="{NAVY}" stroke-width="8"/>'
+        f'<path d="M96 58 l6 6 l10 -12" fill="none" stroke="{GOLD}" stroke-width="3"/>'),
     "list": lambda: svg(
         f'<rect x="36" y="26" width="88" height="58" rx="5" fill="{NAVY}"/>'
         f'<rect x="41" y="31" width="78" height="48" rx="2" fill="#fff"/>'
@@ -202,31 +231,37 @@ body {{ font-family: BSans, Arial, sans-serif; color: {INK}; font-size: 10.5pt; 
 .mark {{ font-family: BSerif; font-weight: 600; font-size: 13pt; letter-spacing: 3.5px; color: {NAVY}; }}
 .tag {{ font-size: 7.8pt; letter-spacing: 2.2px; text-transform: uppercase; color: {GREY}; font-weight: 600; }}
 h1 {{ font-family: BSerif; font-weight: 500; font-size: 39pt; line-height: 1.07; letter-spacing: -0.6px;
-      color: {INK}; margin-top: 0.42in; max-width: 6.6in; }}
+      color: {INK}; margin-top: 0.34in; max-width: 6.9in; }}
 h1 em {{ font-style: italic; font-weight: 400; color: {GOLD}; }}
-.sub {{ font-size: 12.6pt; color: {GREY}; margin-top: 16px; max-width: 5.7in; line-height: 1.5; }}
-.label {{ display: flex; align-items: center; gap: 12px; margin: 0.42in 0 16px; font-size: 8pt; letter-spacing: 2.6px;
+.sub {{ font-size: 12.2pt; color: {GREY}; margin-top: 14px; max-width: 6.4in; line-height: 1.5; }}
+.label {{ display: flex; align-items: center; gap: 12px; margin: 0.34in 0 14px; font-size: 8pt; letter-spacing: 2.6px;
           text-transform: uppercase; color: {GOLD}; font-weight: 700; }}
 .label::after {{ content: ""; flex: 1; height: 1px; background: {LINE}; }}
-.grid {{ display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 22px; row-gap: 22px; }}
-.tile .art {{ background: {IVORY}; border-radius: 16px; height: 1.42in; display: flex; align-items: center;
+.grid {{ display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 22px; row-gap: 18px; }}
+.tile .art {{ background: {IVORY}; border-radius: 16px; height: 1.14in; display: flex; align-items: center;
               justify-content: center; }}
-.tile .art svg {{ height: 1.3in; width: auto; }}
+.tile .art svg {{ height: 1.05in; width: auto; }}
 .tile b {{ display: block; font-family: BSerif; font-weight: 600; font-size: 14.2pt; line-height: 1.2; color: {NAVY};
            margin-top: 11px; }}
 .tile p {{ color: {GREY}; font-size: 10pt; margin-top: 4px; line-height: 1.4; }}
+.tile.wide {{ grid-column: 1 / -1; display: grid; grid-template-columns: 2.2in 1fr; gap: 22px; align-items: center;
+              background: {NAVY}; border-radius: 16px; padding: 10px 26px 10px 10px; }}
+.tile.wide .art {{ height: 1.05in; background: {IVORY}; }}
+.tile.wide .art svg {{ height: 0.98in; }}
+.tile.wide b {{ color: #fff; margin-top: 0; font-size: 15.5pt; }}
+.tile.wide p {{ color: #C9D3E2; font-size: 10.4pt; }}
 .strip {{ margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 16px;
           border-top: 1px solid {LINE}; padding-top: 13px; }}
 .strip .ask {{ font-family: BSerif; font-size: 13.5pt; color: {NAVY}; font-weight: 500; }}
 .contact {{ display: flex; gap: 22px; align-items: center; font-weight: 600; font-size: 10.4pt; color: {INK}; }}
 .contact span {{ display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }}
-.steps {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }}
-.step .art {{ background: {IVORY}; border-radius: 16px; height: 1.62in; display: flex; align-items: center;
+.steps {{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }}
+.step .art {{ background: {IVORY}; border-radius: 16px; height: 1.6in; display: flex; align-items: center;
               justify-content: center; position: relative; }}
-.step .art svg {{ height: 1.46in; width: auto; }}
-.step .n {{ position: absolute; top: 9px; left: 12px; font-family: BSerif; font-style: italic; font-size: 15pt; color: {GOLD}; }}
-.step b {{ display: block; font-family: BSerif; font-weight: 600; font-size: 13.6pt; color: {NAVY}; margin-top: 11px; }}
-.step p {{ color: {GREY}; font-size: 10pt; margin-top: 3px; }}
+.step .art svg {{ height: 1.32in; max-width: 100%; width: auto; margin-top: 10px; }}
+.step .n {{ position: absolute; top: 7px; left: 11px; font-family: BSerif; font-style: italic; font-size: 15pt; color: {GOLD}; }}
+.step b {{ display: block; font-family: BSerif; font-weight: 600; font-size: 12.6pt; color: {NAVY}; margin-top: 11px; }}
+.step p {{ color: {GREY}; font-size: 9.6pt; margin-top: 3px; }}
 .inds {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }}
 .ind {{ display: flex; align-items: center; gap: 10px; border: 1px solid {LINE}; border-radius: 12px; padding: 14px 12px;
         font-size: 9.8pt; font-weight: 600; color: {NAVY}; }}
@@ -270,8 +305,11 @@ def top(d: dict) -> str:
 
 
 def page_one(d: dict) -> str:
-    tiles = "".join(f'<div class="tile"><div class="art">{ART[s["art"]]()}</div><b>{esc(s["title"])}</b>'
-                    f'<p>{esc(s["text"])}</p></div>' for s in d["services"])
+    tiles = "".join(
+        (f'<div class="tile wide"><div class="art">{ART[s["art"]]()}</div><div><b>{esc(s["title"])}</b>'
+         f'<p>{esc(s["text"])}</p></div></div>') if s.get("wide") else
+        (f'<div class="tile"><div class="art">{ART[s["art"]]()}</div><b>{esc(s["title"])}</b>'
+         f'<p>{esc(s["text"])}</p></div>') for s in d["services"])
     return f"""<section class="page">{top(d)}
 <h1>{headline(d["headline"])}</h1>
 <p class="sub">{esc(d["subline"])}</p>
