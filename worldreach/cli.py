@@ -16,6 +16,7 @@
     dns DOMAIN            is a sending domain set up for delivery (SPF, DKIM, DMARC)?
     whatsapp ...          the WhatsApp queue for the tablet (list | next | mark | test)
     client ...            the follow-ups we run for a client (new | list | preview | run | report | stop)
+    pdf                   use your own copy of the overview PDF (saved in the Download folder)
     brochure              build marketing/brochure.pdf again (after changing marketing/brochure.json)
 """
 from __future__ import annotations
@@ -217,9 +218,12 @@ def cmd_check(_a) -> int:
                                           else f"{len(problems)} thing(s) a spam filter would mind:"))
     for p in problems[:12]:
         print("       " + p)
-    pdf = ROOT / str(o["auto_reply"]["attachment"])
-    line(pdf.is_file(), f"overview PDF for interested businesses: {pdf.name}" + ("" if pdf.is_file() else " is missing"),
-         warn=True)
+    from .outreach.engine import overview_pdf
+
+    pdf = overview_pdf(o)
+    own = bool(pdf and pdf.parent == S.data_dir())
+    line(own, "overview PDF for interested businesses: " + ("your own copy (with your phone and e-mail)" if own else
+         "the one without your contact details - save yours into Download and type  wr pdf"), warn=True)
     print("\nAll good." if ok else "\nFix the lines marked [!!] (wr settings), then run  wr check  again.")
     return 0 if ok else 1
 
@@ -735,6 +739,27 @@ def print_client_report(r: dict) -> None:
         print(f"    answer from {x['email']}: \"{x['text'][:160]}\"")
 
 
+def cmd_pdf(_a) -> int:
+    """Your own copy of the overview (with your phone and e-mail) from the Download folder: the PDF businesses get."""
+
+    folders = [Path(p) for p in (os.environ.get("DOWNLOAD_DIR", ""), "/sdcard/Download", str(Path.home() / "Downloads"))
+               if p and Path(p).is_dir()]
+    found = sorted((f for d in folders for f in d.glob("Aurenflow-overview*.pdf")), key=lambda f: f.stat().st_mtime)
+    if not found:
+        print("No Aurenflow-overview....pdf in your Download folder. Save the PDF I sent you there first.")
+        return 1
+    data = found[-1].read_bytes()
+    if not data.startswith(b"%PDF"):
+        print(f"{found[-1].name} is not a PDF.")
+        return 1
+    dest = S.data_dir() / "brochure.pdf"
+    tmp = dest.with_suffix(".new")
+    tmp.write_bytes(data)
+    os.replace(tmp, dest)
+    print(f"Done: {found[-1].name} is now the PDF businesses get when they ask for the overview.")
+    return 0
+
+
 def cmd_brochure(a) -> int:
     return subprocess.call([sys.executable, str(ROOT / "marketing" / "build_brochure.py"), *a.rest], cwd=ROOT)
 
@@ -792,6 +817,7 @@ def build_parser() -> argparse.ArgumentParser:
     cl.add_argument("--all", action="store_true", help="run: every client")
     cl.add_argument("--dry-run", action="store_true", help="run: only count what is due")
     cl.add_argument("--days", type=int, default=30)
+    sub.add_parser("pdf", help="use your own copy of the overview PDF (from the Download folder)")
     br = sub.add_parser("brochure", help="build the overview PDF again")
     br.add_argument("rest", nargs=argparse.REMAINDER)
     rb = sub.add_parser("robot", help="the robot's timetable: serve | status | log | run JOB")
@@ -808,7 +834,8 @@ def main(argv=None) -> int:
         return robot.main(a.rest)
     run = {"check": cmd_check, "preview": cmd_preview, "emails": cmd_emails, "test": cmd_test, "leads": cmd_leads,
            "hunt": cmd_hunt, "status": cmd_status, "report": cmd_report, "resume": cmd_resume,
-           "outlook-login": cmd_outlook_login, "dns": cmd_dns, "whatsapp": cmd_whatsapp, "brochure": cmd_brochure,
+           "outlook-login": cmd_outlook_login, "dns": cmd_dns, "whatsapp": cmd_whatsapp,
+           "brochure": cmd_brochure, "pdf": cmd_pdf,
            "client": cmd_client}[a.cmd]
     try:
         if a.cmd in ("emails", "leads", "hunt"):

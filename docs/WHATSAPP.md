@@ -29,7 +29,7 @@ Later answers ("Interested", "Not interested") you set in the **Result** column 
 
 1. Install **WhatsApp Business** (not the normal WhatsApp) on the tablet, or link the tablet to the phone that
    has the number (WhatsApp Business → ⋮ → Linked devices).
-2. Business profile: name **Aurenflow**, the logo (`marketing/brand/aurenflow-icon.png`), category *Business
+2. Business profile: name **Aurenflow**, category *Business
    service*, description: "Customer follow-up for local businesses: we bring back customers who stopped coming,
    remind the ones who are due, and collect Google reviews. Done for you."
 3. Business tools → **Greeting message** on: "Hi, thanks for messaging Aurenflow! I'm Ravik. Tell me your business

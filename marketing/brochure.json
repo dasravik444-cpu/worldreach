@@ -1,62 +1,39 @@
 {
-  "_comment": "What is printed on the overview PDF (marketing/brochure.pdf). Change it here, then: wr brochure",
+  "_comment": "The overview PDF (marketing/brochure.pdf). Change the words here, then: python marketing/build_brochure.py. Your phone and e-mail are NOT kept here (this repository is public): they are added only to your own copy, built with --phone and --email.",
   "brand": "Aurenflow",
-  "brand_accent": "flow",
-  "tagline": "Customer follow-up, done for you",
-  "name": "Ravik",
-  "email": "",
-  "phone": "",
-  "website": "",
-  "edition": "INT-2026-11",
-  "currency": "$",
-  "show_prices": true,
-  "plans": [
-    {
-      "name": "Reviews",
-      "price": 149,
-      "per": "month",
-      "for": "Turn happy visits into Google reviews",
-      "items": [
-        "Review request after every visit, stay or class",
-        "Print-ready QR code for the counter and receipts",
-        "Everyone is asked the same way, as Google requires",
-        "Monthly report: new reviews and rating"
-      ]
-    },
-    {
-      "name": "Retention",
-      "price": 299,
-      "per": "month",
-      "popular": true,
-      "for": "Bring customers back, and keep them",
-      "items": [
-        "Everything in Reviews",
-        "Win-back series to customers who stopped coming",
-        "Come-back reminders when a customer is due",
-        "You approve every message before it goes out",
-        "Monthly report: who came back"
-      ]
-    },
-    {
-      "name": "Complete",
-      "price": 499,
-      "per": "month",
-      "for": "The whole follow-up, off your desk",
-      "items": [
-        "Everything in Retention",
-        "Polite reminders for missed payments and renewals",
-        "Your list refreshed every week, not every month",
-        "Changes to your messages within a day",
-        "A call with us every month"
-      ]
-    }
+  "tagline": "Customer growth for local businesses",
+  "edition": "INT-2026-11b",
+  "headline": "More sales from the customers you already have.",
+  "subline": "We follow up with your customers for you, so more of them come back and more of them leave you a great review.",
+  "services": [
+    {"art": "sales", "title": "Boost your sales", "text": "Bring past customers back through your door."},
+    {"art": "reviews", "title": "Grow your Google reviews", "text": "Happy customers, asked at the right moment."},
+    {"art": "followup", "title": "Automatic follow-ups", "text": "Every customer hears from you. You lift no finger."},
+    {"art": "reminder", "title": "Rebooking reminders", "text": "A friendly nudge when it is time to come back."},
+    {"art": "winback", "title": "Win back lost customers", "text": "A warm welcome back for those who drifted away."},
+    {"art": "payment", "title": "Missed-payment reminders", "text": "Polite, private and always on time."}
   ],
-  "sprint": {
-    "name": "Win-Back Sprint",
-    "price": 399,
-    "per": "one time",
-    "text": "Not ready for a monthly plan? One 30-day campaign to your list of past customers: we write it, send it and hand you every reply."
-  },
-  "terms": "No contract. Cancel any time. Setup is included.",
-  "channels": "Messages go out by e-mail, in your name. Text messages (SMS) or WhatsApp can be set up as an extra where your customers have agreed to them; carrier fees are passed on at cost."
+  "steps": [
+    {"art": "list", "title": "Share your customer list", "text": "One export from the system you already use."},
+    {"art": "approve", "title": "We write, you approve", "text": "In your name and your voice. Nothing goes out without your yes."},
+    {"art": "growth", "title": "Customers come back", "text": "Replies land in your inbox. A clear report every month."}
+  ],
+  "industries": [
+    {"icon": "gym", "label": "Gyms"},
+    {"icon": "yoga", "label": "Yoga & dance studios"},
+    {"icon": "karate", "label": "Martial arts schools"},
+    {"icon": "scissors", "label": "Salons & spas"},
+    {"icon": "bed", "label": "Hotels"},
+    {"icon": "cup", "label": "Restaurants & cafés"},
+    {"icon": "paw", "label": "Pet groomers"},
+    {"icon": "wrench", "label": "Garages"}
+  ],
+  "promises": [
+    "You approve every message before it goes out",
+    "Your customer list stays yours, always",
+    "Fully within Google's review rules"
+  ],
+  "cta_title": "Let's talk for 15 minutes.",
+  "cta_text": "We'll look at your customers together and show you the first messages we'd send. No obligation.",
+  "contact_fallback": "Simply reply to our e-mail"
 }

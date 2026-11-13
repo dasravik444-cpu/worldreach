@@ -373,9 +373,8 @@ class Engine:
         if ramp.allowance(self.store, self.o, box, self._day(), self.now())[0] <= 0 or \
                 ramp.room_24h(self.store, self.o, box, self.now()) <= 0:
             return False
-        path = Path(str(a.get("attachment") or ""))
-        path = path if path.is_absolute() else ROOT / path
-        attach = [(_pdf_name(self.o), path.read_bytes())] if path.is_file() else None
+        path = overview_pdf(self.o)
+        attach = [(_pdf_name(self.o), path.read_bytes())] if path else None
         if attach is None:
             return False                # no PDF to send: the owner answers
         ids = self.store.msgids(t)
@@ -961,6 +960,19 @@ class Engine:
                 self.notes.append(note)
         return {"status": status, "mode": "live" if self.live else "dry-run", **self.stats,
                 "limits_today": dict(self.caps), "notes": self.notes}
+
+
+def overview_pdf(o: dict) -> Path | None:
+    """The PDF for businesses that asked: the owner's own copy (with their phone and e-mail, put in place by
+    wr pdf  as data/brochure.pdf) when there is one, else the one that comes with the code."""
+    from ..settings import data_dir
+
+    own = data_dir() / "brochure.pdf"
+    if own.is_file():
+        return own
+    path = Path(str(o["auto_reply"].get("attachment") or ""))
+    path = path if path.is_absolute() else ROOT / path
+    return path if path.is_file() else None
 
 
 def _pdf_name(o: dict) -> str:

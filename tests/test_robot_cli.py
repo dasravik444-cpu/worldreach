@@ -109,3 +109,19 @@ def test_the_shipped_files_are_consistent():
     assert not re.search(r"\+91[\s\d]{8,}|@gmail\.com", text)
     assert (ROOT / "marketing" / "brochure.pdf").read_bytes().startswith(b"%PDF")
     assert b"edition INT-" in (ROOT / "marketing" / "brochure.pdf").read_bytes()
+
+
+def test_wr_pdf_takes_the_owner_s_own_copy_from_download(tmp_path, monkeypatch):
+    from worldreach.outreach.engine import overview_pdf
+
+    down = tmp_path / "Download"
+    down.mkdir()
+    monkeypatch.setenv("WR_DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("DOWNLOAD_DIR", str(down))
+    (tmp_path / "data").mkdir()
+    o = C.load(ROOT / "config" / "outreach.toml")
+    assert overview_pdf(o) == ROOT / "marketing" / "brochure.pdf"          # the one that comes with the code
+    assert cli.cmd_pdf(None) == 1
+    (down / "Aurenflow-overview.pdf").write_bytes(b"%PDF-1.4 mine")
+    assert cli.cmd_pdf(None) == 0
+    assert overview_pdf(o).read_bytes() == b"%PDF-1.4 mine"
