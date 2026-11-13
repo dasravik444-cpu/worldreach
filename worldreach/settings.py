@@ -51,6 +51,7 @@ class MailboxConfig:
     client_id: str = ""        # outlook: the Microsoft app registration
     tenant: str = "common"     # outlook: "consumers" (outlook.com), "organizations" or a tenant id
     max_per_day: int = 0       # 0 = the warm-up plan's own top
+    same_as: int = 0           # the number of an earlier mailbox with the same address (a typing mistake)
 
     @property
     def key(self) -> str:
@@ -66,6 +67,11 @@ class MailboxConfig:
             return f"MAILBOX_{self.index} must be one of: {', '.join(KINDS)}"
         if "@" not in self.address:
             return f"MAILBOX_{self.index}_ADDRESS is missing"
+        if self.same_as:
+            return f"the same address as mailbox {self.same_as}: each mailbox needs its own address"
+        typo = mistyped_domain(self.domain)
+        if typo:
+            return f"{self.domain} looks mistyped - did you mean {typo}?"
         if self.kind == "outlook":
             return "" if self.client_id else "OUTLOOK_CLIENT_ID is missing (docs/OUTLOOK.md)"
         if not self.password:
@@ -73,6 +79,20 @@ class MailboxConfig:
         if self.kind == "smtp" and not (self.smtp_host and self.imap_host):
             return f"MAILBOX_{self.index}_SMTP_HOST and MAILBOX_{self.index}_IMAP_HOST are missing"
         return ""
+
+
+PROVIDER_DOMAINS = ("gmail.com", "googlemail.com", "outlook.com", "outlook.in", "hotmail.com", "live.com", "msn.com",
+                    "yahoo.com", "icloud.com")
+
+
+def mistyped_domain(domain: str) -> str:
+    """The provider domain this one is one or two letters away from ("gmaio.com" -> "gmail.com"); "" if none."""
+    import difflib
+
+    if not domain or domain in PROVIDER_DOMAINS:
+        return ""
+    close = difflib.get_close_matches(domain, PROVIDER_DOMAINS, n=1, cutoff=0.8)
+    return close[0] if close else ""
 
 
 def read_file(path: Path) -> dict:
@@ -145,6 +165,14 @@ def mailboxes(settings: dict) -> list[MailboxConfig]:
             imap_host=g("IMAP_HOST") or preset.get("imap_host", ""),
             client_id=g("CLIENT_ID") or str(settings.get("OUTLOOK_CLIENT_ID") or "").strip(),
             tenant=g("TENANT") or str(settings.get("OUTLOOK_TENANT") or "common").strip(), max_per_day=top))
+    from dataclasses import replace
+
+    first: dict[str, int] = {}
+    for i, b in enumerate(out):
+        if b.key in first:
+            out[i] = replace(b, same_as=first[b.key])
+        else:
+            first[b.key] = b.index
     return out
 
 

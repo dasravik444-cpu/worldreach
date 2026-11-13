@@ -333,3 +333,16 @@ def test_dns_check_tells_what_a_sending_domain_is_missing():
     bare = {what: ok for what, ok, _ in check_domain("hello@bare.com", R({("bare.com", "MX"): [Mx()]}))}
     assert bare == {"MX": True, "SPF": False, "DKIM": False, "DMARC": False}
     assert check_domain("someone@gmail.com")[0][1] is True
+
+
+def test_typing_mistakes_in_the_mailbox_settings_are_caught():
+    st = {"MAILBOX_1": "gmail", "MAILBOX_1_ADDRESS": "a@gmail.com", "MAILBOX_1_PASSWORD": "x",
+          "MAILBOX_2": "gmail", "MAILBOX_2_ADDRESS": "b@gmaio.com", "MAILBOX_2_PASSWORD": "x",
+          "MAILBOX_4": "outlook", "MAILBOX_4_ADDRESS": "c@outlook.in", "MAILBOX_5": "outlook",
+          "MAILBOX_5_ADDRESS": "C@outlook.in", "OUTLOOK_CLIENT_ID": "cid", "MAILBOX_6": "smtp",
+          "MAILBOX_6_ADDRESS": "hello@mystudio.com", "MAILBOX_6_PASSWORD": "x", "MAILBOX_6_SMTP_HOST": "smtp.zoho.com",
+          "MAILBOX_6_IMAP_HOST": "imap.zoho.com"}
+    problems = {b.index: b.problem() for b in S.mailboxes(st)}
+    assert problems[1] == "" and problems[4] == "" and problems[6] == ""
+    assert problems[2] == "gmaio.com looks mistyped - did you mean gmail.com?"
+    assert problems[5] == "the same address as mailbox 4: each mailbox needs its own address"
